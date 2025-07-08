@@ -1,0 +1,18 @@
+# OtterDram Test Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT}/test_db
+    username: postgres
+    password: ""
+    hikari:
+      auto-commit: false
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: true
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG
+    com.zaxxer.hikari.pool.HikariPool: DEBUG
