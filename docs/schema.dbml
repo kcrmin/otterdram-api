@@ -1,14 +1,14 @@
 // OtterDram DB Schema
-// version: 1.0.0
-// last updated: 2025-07-06
+// version: 1.1.0
+// last updated: 2025-07-08
 // author: kcrmin
 
 // ======================= ENUMS (상수 타입) =======================
 // 1. 공통/기초
 Enum LanguageCode {
-  en
-  ko
-  ja
+  EN
+  KO
+  JA
 }
 Enum TernaryStatus {
   TRUE
@@ -66,22 +66,12 @@ Enum Gender {
   UNSPECIFIED
   OTHER
 }
-Enum SocialProvider {
-  GOOGLE
-  APPLE
-  KAKAO
-}
 Enum UserStatus {
   ACTIVE
   SUSPENDED     // 임시정지
   BANNED        // 영구정지
   DEACTIVATED   // 자진 비활성화
   DELETED
-}
-Enum Role {
-  USER
-  ADMIN
-  MODERATOR
 }
 Enum DistilleryOperationalStatus {
   ACTIVE             // 정상 운영 중
@@ -96,6 +86,11 @@ Enum DistilleryOperationalStatus {
 }
 
 // 4. 데이터/승인/이관
+Enum FollowStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
 Enum DataStatus {
   PENDING
   CONFIRMED
@@ -287,8 +282,8 @@ Table users {
   email varchar(255) [not null, unique, note: "인증된 이메일만"]
   profile_image varchar(255)
   verified boolean [not null, default: false, note: "인증된 인플루언서/전문가"]
-  user_privacy UserPrivacy [not null, default: 'PUBLIC']
-  status UserStatus [not null, default: 'ACTIVE']
+  user_privacy Privacy [not null, default: 'PUBLIC']
+  user_status UserStatus [not null, default: 'ACTIVE']
   last_login_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -310,7 +305,7 @@ Table user_profiles {
 Table user_social_accounts {
   id bigint [pk, increment]
   user_id bigint [not null, ref: > users.id]
-  provider SocialProvider [not null]
+  provider varchar(50) [not null]
   provider_id varchar(255) [not null]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   indexes {
@@ -321,11 +316,11 @@ Table user_social_accounts {
 Table user_settings {
   id bigint [pk, increment]
   user_id bigint [ref: - users.id, not null, unique]
-  marketing_opt_in boolean [not null, default: false, note: "마케팅 수신 동의 여부"]
-  marketing_opt_at timestamp [not null, note: "마케팅 수신 동의 시각(최초 동의/철회 변경 시마다 갱신)"]
-  terms_version_agreed varchar(32) [not null, note: "약관버전. 예: '2024.06'"]
-  notification_opt_in boolean [not null, default: false, note: "이메일/앱 알림 전체 동의 여부"]
-  push_opt_in boolean [not null, default: false, note: "앱 푸시 알림 동의 여부"]
+  // marketing_opt_in boolean [not null, default: false, note: "마케팅 수신 동의 여부"]
+  // marketing_opt_at timestamp [not null, note: "마케팅 수신 동의 시각(최초 동의/철회 변경 시마다 갱신)"]
+  terms_version_agreed varchar(50) [not null, note: "약관버전. 예: '2024.06'"]
+  // notification_opt_in boolean [not null, default: false, note: "이메일/앱 알림 전체 동의 여부"]
+  // push_opt_in boolean [not null, default: false, note: "앱 푸시 알림 동의 여부"]
   lang_preference LanguageCode [not null, default: 'en']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -334,10 +329,22 @@ Table user_settings {
 // ---- 사용자 역할 ----
 Table user_roles {
   id bigint [pk, increment]
-  user_id bigint [ref: - users.id, not null, unique]
-  role Role [not null, default: 'USER']
+  user_id bigint [ref: > users.id, not null]
+  role_id bigint [ref: > roles.id, not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: "ROLE_USER: created_at, ROLE_ADMIN: assigned_at"]
+  created_by bigint [ref: > users.id, not null, note: "ROLE_USER: created_by, ROLE_ADMIN: assigned_by"]
+  indexes {
+    (user_id, role_id) [unique]
+  }
+}
+
+Table roles {
+  id bigint [pk, increment]
+  role_name varchar(50) [unique, not null, note: "ROLE_REVIEWER, ROLE_EDITOR, ROLE_ADMIN, ROLE_USER"]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_by bigint [ref: > users.id, not null]
 }
 
 // ---- 팔로우 관계 ----
@@ -345,7 +352,7 @@ Table user_follows {
   id bigint [pk, increment]
   follower_id bigint [ref: > users.id, not null]
   followee_id bigint [ref: > users.id, not null]
-  status DataStatus [not null]
+  status FollowStatus [not null, default: `APPROVED`]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
 // ---- 사용자 차단 ----
@@ -353,7 +360,7 @@ Table user_blocks {
   id bigint [pk, increment]
   blocker_id bigint [ref: > users.id, not null]
   blocked_id bigint [ref: > users.id, not null]
-  blocked_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
 
 // ================== 신고/리포트 ==================
@@ -810,7 +817,7 @@ Table casks {
   name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
   translation text [note: "다국어 지원"]
   fill_number FillNumber
-  previous_content_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
+  category_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
   material_id bigint [ref: > cask_materials.id]
   shape_id bigint [ref: > cask_types.id]
   description text [note: "다국어 지원"]
@@ -958,5 +965,3 @@ Table model_comment_votes {
     (model_comment_id, created_by) [unique]
   }
 }
-
-
