@@ -1,7 +1,8 @@
-package com.otterdram.otterdram.user.domain;
+package com.otterdram.otterdram.domain.user.setting;
 
 import com.otterdram.otterdram.common.audit.TimestampAudit;
 import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 
 /** UserSetting Entity

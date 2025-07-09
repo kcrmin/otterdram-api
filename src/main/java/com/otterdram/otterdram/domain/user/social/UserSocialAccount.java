@@ -1,6 +1,7 @@
-package com.otterdram.otterdram.user.domain;
+package com.otterdram.otterdram.domain.user.social;
 
 import com.otterdram.otterdram.common.audit.CreatedAtOnlyAudit;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 
 /** UserSocialAccount Entity

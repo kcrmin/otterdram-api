@@ -1,9 +1,14 @@
-package com.otterdram.otterdram.user.domain;
+package com.otterdram.otterdram.domain.user.user;
 
 import com.otterdram.otterdram.common.audit.TimestampAudit;
 import com.otterdram.otterdram.common.enums.Privacy;
 import com.otterdram.otterdram.common.enums.UserStatus;
-import com.otterdram.otterdram.user.domain.role.UserRole;
+import com.otterdram.otterdram.domain.user.block.UserBlock;
+import com.otterdram.otterdram.domain.user.follow.UserFollow;
+import com.otterdram.otterdram.domain.user.role.UserRole;
+import com.otterdram.otterdram.domain.user.profile.UserProfile;
+import com.otterdram.otterdram.domain.user.setting.UserSetting;
+import com.otterdram.otterdram.domain.user.social.UserSocialAccount;
 import jakarta.persistence.*;
 
 import java.time.Instant;

@@ -1,9 +1,9 @@
-package com.otterdram.otterdram.user.domain;
+package com.otterdram.otterdram.domain.user.block;
 
 import com.otterdram.otterdram.common.audit.CreatedAtOnlyAudit;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /** UserBlock Entity
  * Table user_blocks {

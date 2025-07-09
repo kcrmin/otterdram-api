@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.audit;
 
-import com.otterdram.otterdram.user.domain.User;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;

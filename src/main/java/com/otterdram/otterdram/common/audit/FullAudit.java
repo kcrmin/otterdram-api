@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.audit;
 
-import com.otterdram.otterdram.user.domain.User;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;

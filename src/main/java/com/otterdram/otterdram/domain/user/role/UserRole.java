@@ -1,10 +1,8 @@
-package com.otterdram.otterdram.user.domain.role;
+package com.otterdram.otterdram.domain.user.role;
 
 import com.otterdram.otterdram.common.audit.CreatedAudit;
-import com.otterdram.otterdram.user.domain.User;
+import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
-
-import java.time.Instant;
 
 /** UserRole Entity
  * <pre>

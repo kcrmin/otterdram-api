@@ -1,4 +1,4 @@
-package com.otterdram.otterdram.user.domain.role;
+package com.otterdram.otterdram.domain.user.role;
 
 import com.otterdram.otterdram.common.audit.FullAudit;
 import jakarta.persistence.*;
