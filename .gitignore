@@ -289,3 +289,10 @@ HELP.md
 # .env
 .env*
 !.env.example
+
+# SQL
+*.sql
+
+# Python
+__pycache__/
+.venv/
