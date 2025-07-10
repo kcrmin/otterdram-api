@@ -12,25 +12,14 @@ import logging
 from pathlib import Path
 from typing import List, Dict, Optional
 
-# 프로젝트 루트를 sys.path에 추가
-CURRENT_DIR = Path(__file__).resolve().parent
-GEO_DB_ROOT = CURRENT_DIR.parent
+# 모든 common 모듈 import
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.quick_import import quick_import  # noqa: E402
 
-if str(GEO_DB_ROOT) not in sys.path:
-    sys.path.insert(0, str(GEO_DB_ROOT))
-
-# common 모듈에서 필요한 것들 임포트
-from common import (
-    DatabaseValidationError,
-    DatabaseManager,
-    load_local_env,
-    setup_logging,
-    get_database_config,
-    get_target_tables_from_env,
-)
+imp = quick_import(__file__)
 
 
-class DatabaseTranslationValidator(DatabaseManager):
+class DatabaseTranslationValidator(imp.DatabaseManager):
     """데이터베이스의 translation JSON 필드를 검증하는 클래스"""
 
     def __init__(self, logger: Optional[logging.Logger] = None):
@@ -41,18 +30,16 @@ class DatabaseTranslationValidator(DatabaseManager):
         super().__init__(logger)
 
         # 데이터베이스 설정
-        self.db_config = get_database_config("MAIN")
+        self.db_config = imp.get_database_config("MAIN")
 
         # 검증 대상 테이블
-        self.target_tables = get_target_tables_from_env(
+        self.target_tables = imp.get_target_tables_from_env(
             default_tables=["regions", "subregions", "countries"]
         )
 
-        self.validation_errors: List[DatabaseValidationError] = []
+        self.validation_errors = []
 
-    def _validate_table_translations(
-        self, table_name: str
-    ) -> List[DatabaseValidationError]:
+    def _validate_table_translations(self, table_name: str) -> List:
         """특정 테이블의 translation 필드들을 검증합니다."""
         self.logger.info(f"테이블 '{table_name}' 데이터베이스 검증 시작")
         table_errors = []
@@ -74,7 +61,7 @@ class DatabaseTranslationValidator(DatabaseManager):
                     # JSON 유효성 검사
                     json.loads(translations)
                 except (json.JSONDecodeError, TypeError) as e:
-                    error = DatabaseValidationError(
+                    error = imp.DatabaseValidationError(
                         table=table_name,
                         id=id_,
                         name=name,
@@ -171,7 +158,7 @@ class DatabaseTranslationValidator(DatabaseManager):
         """오류 개수를 반환합니다."""
         return len(self.validation_errors)
 
-    def get_errors_by_table(self) -> Dict[str, List[DatabaseValidationError]]:
+    def get_errors_by_table(self) -> Dict:
         """테이블별로 그룹화된 오류를 반환합니다."""
         errors_by_table = {}
         for error in self.validation_errors:
@@ -185,11 +172,11 @@ def main():
     """메인 실행 함수"""
     try:
         # 환경 변수 로드
-        load_local_env()
+        imp.load_local_env()
 
         # 로깅 설정
-        logger = setup_logging(
-            base_path=GEO_DB_ROOT,
+        logger = imp.setup_logging(
+            base_path=imp.GEO_DB_ROOT,
             log_dir_env="TRANSLATION_LOG_DIR",
             log_file_env="POST_CHECK_LOG_FILE",
         )

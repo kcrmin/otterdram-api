@@ -13,26 +13,11 @@ import logging
 from pathlib import Path
 from typing import List, Tuple, Optional
 
-# 프로젝트 루트를 sys.path에 추가
-CURRENT_DIR = Path(__file__).resolve().parent
-GEO_DB_ROOT = CURRENT_DIR.parent
+# 모든 common 모듈 import
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.quick_import import quick_import  # noqa: E402
 
-if str(GEO_DB_ROOT) not in sys.path:
-    sys.path.insert(0, str(GEO_DB_ROOT))
-
-# common 모듈에서 필요한 것들 임포트
-from common import (
-    ValidationError,
-    JSONFixer,
-    load_local_env,
-    setup_logging,
-    parse_json_error_details,
-    find_error_in_json_structure,
-    get_bool_env,
-    get_int_env,
-    get_target_tables_from_env,
-    create_backup_file,
-)
+imp = quick_import(__file__)
 
 
 class SQLTranslationValidator:
@@ -45,8 +30,8 @@ class SQLTranslationValidator:
             logger: 로거 인스턴스 (옵션)
         """
         # 환경 변수에서 설정 로드
-        self.context_length = get_int_env("ERROR_CONTEXT_LENGTH", 30)
-        self.target_tables = get_target_tables_from_env(
+        self.context_length = imp.get_int_env("ERROR_CONTEXT_LENGTH", 30)
+        self.target_tables = imp.get_target_tables_from_env(
             default_tables=["regions", "subregions", "countries"]
         )
 
@@ -56,11 +41,11 @@ class SQLTranslationValidator:
 
         self.sql_file_path = Path(sql_file_path)
         self.sql_content = ""
-        self.validation_errors: List[ValidationError] = []
+        self.validation_errors = []
         self.logger = logger or logging.getLogger("translation_validator")
 
         # JSON 수정기 초기화
-        self.json_fixer = JSONFixer(self.logger)
+        self.json_fixer = imp.JSONFixer(self.logger)
 
     def _load_sql_file(self) -> None:
         """SQL 파일을 로드합니다."""
@@ -95,7 +80,7 @@ class SQLTranslationValidator:
 
     def _get_error_context(self, json_str: str, error_pos: int) -> str:
         """JSON 오류 위치 주변의 컨텍스트를 반환합니다."""
-        return find_error_in_json_structure(json_str, error_pos)
+        return imp.find_error_in_json_structure(json_str, error_pos)
 
     def _find_line_number_from_offset(self, offset: int) -> int:
         """오프셋 위치의 라인 번호를 찾습니다."""
@@ -108,7 +93,7 @@ class SQLTranslationValidator:
             return None
         except json.JSONDecodeError as e:
             # 더 명확한 오류 메시지 생성
-            error_type, error_msg = parse_json_error_details(json_str, e)
+            error_type, error_msg = imp.parse_json_error_details(json_str, e)
             formatted_json = self._get_error_context(json_str, e.pos)
 
             return f"{error_type}: {error_msg}\n{formatted_json}"
@@ -146,7 +131,7 @@ class SQLTranslationValidator:
                     if not error_line:
                         error_line = "[error] JSON 파싱 오류"
 
-                    error = ValidationError(
+                    error = imp.ValidationError(
                         table=table_name,
                         row_id=row_id,
                         line_number=line_num,
@@ -238,7 +223,7 @@ class SQLTranslationValidator:
             )
 
             # 자동 수정 안내 메시지 추가
-            auto_fix = get_bool_env("AUTO_FIX_ERRORS", False)
+            auto_fix = imp.get_bool_env("AUTO_FIX_ERRORS", False)
             if not auto_fix:
                 print(
                     "💡 .env에서 AUTO_FIX_ERRORS=true로 설정하면 자동 수정을 시도합니다."
@@ -261,7 +246,7 @@ class SQLTranslationValidator:
             return True
 
         # 환경 변수에서 백업 설정 읽기
-        create_backup = get_bool_env("CREATE_BACKUP", True)
+        create_backup = imp.get_bool_env("CREATE_BACKUP", True)
 
         self.logger.info(
             f"JSON 오류 자동 수정 시작: {len(self.validation_errors)}개 오류"
@@ -271,7 +256,7 @@ class SQLTranslationValidator:
         backup_path = None
         if create_backup:
             try:
-                backup_path = create_backup_file(self.sql_file_path, create_backup)
+                backup_path = imp.create_backup_file(self.sql_file_path, create_backup)
                 if backup_path:
                     self.logger.info(f"백업 파일 생성: {backup_path}")
             except Exception as e:
@@ -363,11 +348,11 @@ def main():
     """메인 실행 함수"""
     try:
         # 환경 변수 로드
-        load_local_env()
+        imp.load_local_env()
 
         # 로깅 설정
-        logger = setup_logging(
-            base_path=GEO_DB_ROOT,
+        logger = imp.setup_logging(
+            base_path=imp.GEO_DB_ROOT,
             log_dir_env="TRANSLATION_LOG_DIR",
             log_file_env="TRANSLATION_LOG_FILE",
         )
@@ -376,7 +361,7 @@ def main():
         default_sql_path = os.getenv("DUMP_FILE")
         if not default_sql_path:
             # .env에 DUMP_FILE이 없는 경우 기본값 사용
-            default_sql_path = str(GEO_DB_ROOT / "data" / "world.sql")
+            default_sql_path = str(imp.GEO_DB_ROOT / "data" / "world.sql")
             logger.warning(
                 f".env에 DUMP_FILE이 설정되지 않음. 기본값 사용: {default_sql_path}"
             )
@@ -391,7 +376,7 @@ def main():
 
         # 오류가 있고 자동 수정이 활성화된 경우 수정 시도
         if not is_valid:
-            auto_fix = get_bool_env("AUTO_FIX_ERRORS", False)
+            auto_fix = imp.get_bool_env("AUTO_FIX_ERRORS", False)
             if auto_fix:
                 logger.info(
                     "🔧 자동 수정 모드가 활성화되어 있습니다. JSON 오류 수정을 시도합니다..."

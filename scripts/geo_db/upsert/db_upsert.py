@@ -13,26 +13,14 @@ import logging
 from typing import Optional
 from pathlib import Path
 
-# 프로젝트 루트를 sys.path에 추가
-CURRENT_DIR = Path(__file__).resolve().parent
-GEO_DB_ROOT = CURRENT_DIR.parent
+# 모든 common 모듈 import
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.quick_import import quick_import  # noqa: E402
 
-if str(GEO_DB_ROOT) not in sys.path:
-    sys.path.insert(0, str(GEO_DB_ROOT))
-
-# common 모듈에서 필요한 것들 임포트
-from common import (
-    DatabaseManager,
-    load_local_env,
-    setup_logging,
-    get_database_config,
-    validate_database_config,
-    get_target_tables_from_env,
-    get_int_env,
-)
+imp = quick_import(__file__)
 
 
-class GeoDataUpsertManager(DatabaseManager):
+class GeoDataUpsertManager(imp.DatabaseManager):
     """지리 데이터 업서트 작업을 관리하는 클래스"""
 
     def __init__(self, logger: Optional[logging.Logger] = None):
@@ -43,18 +31,18 @@ class GeoDataUpsertManager(DatabaseManager):
         super().__init__(logger)
 
         # 데이터베이스 설정
-        self.main_db_config = get_database_config("MAIN")
-        self.temp_db_config = get_database_config("TEMP")
+        self.main_db_config = imp.get_database_config("MAIN")
+        self.temp_db_config = imp.get_database_config("TEMP")
 
         # Dump 파일 경로
         self.dump_file = Path(os.getenv("DUMP_FILE", ""))
 
         # 대상 테이블 목록
-        self.target_tables = get_target_tables_from_env()
+        self.target_tables = imp.get_target_tables_from_env()
 
         # 대기 테이블과 타임아웃 설정
         self.wait_table = os.getenv("WAIT_TABLE", "subregions")
-        self.wait_timeout = get_int_env("WAIT_TIMEOUT", 10)
+        self.wait_timeout = imp.get_int_env("WAIT_TIMEOUT", 10)
 
     def _validate_config(self) -> None:
         """설정 유효성을 검사합니다."""
@@ -63,8 +51,8 @@ class GeoDataUpsertManager(DatabaseManager):
             self.logger.error(error_msg)
             raise FileNotFoundError(error_msg)
 
-        validate_database_config(self.main_db_config, "MAIN")
-        validate_database_config(self.temp_db_config, "TEMP")
+        imp.validate_database_config(self.main_db_config, "MAIN")
+        imp.validate_database_config(self.temp_db_config, "TEMP")
 
     def _setup_temp_database(self) -> None:
         """임시 데이터베이스를 설정합니다."""
@@ -159,11 +147,11 @@ def main() -> None:
     """메인 실행 함수"""
     try:
         # 환경 변수 로드
-        load_local_env()
+        imp.load_local_env()
 
         # 로깅 설정
-        logger = setup_logging(
-            base_path=GEO_DB_ROOT,
+        logger = imp.setup_logging(
+            base_path=imp.GEO_DB_ROOT,
             log_dir_env="DB_UPSERT_LOG_DIR",
             log_file_env="DB_UPSERT_LOG_FILE",
         )
