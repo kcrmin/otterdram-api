@@ -1,5 +1,6 @@
 package com.otterdram.otterdram.common.geo.country;
 
+import com.otterdram.otterdram.common.enums.LanguageCode;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.common.geo.region.Region;
 import com.otterdram.otterdram.common.geo.state.State;
@@ -38,11 +39,11 @@ import java.util.Map;
  *   latitude numeric(10,8)
  *   longitude numeric(11,8)
  *   emoji varchar(191) [note: "국기 이모지, 예: '🇰🇷'"]
- *   emojiU varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
+ *   "emojiU" varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
  *   created_at timestamp
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
- *   wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
+ *   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
  * }
  * </pre>
  */
@@ -105,12 +106,13 @@ public class Country {
     @Column(name = "nationality", length = 255)
     private String Nationality;
 
+    @Type(JsonType.class)
     @Column(name = "timezones", columnDefinition = "text")
-    private String timezones;
+    private List<TimeZoneInfo> timezones;
 
     @Type(JsonType.class)
     @Column(name = "translations", columnDefinition = "text")
-    private Map<String, String> translations;
+    private Map<LanguageCode, String> translations;
 
     @Column(name = "latitude", precision = 10, scale = 8)
     private Double latitude;

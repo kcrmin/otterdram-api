@@ -1,5 +1,6 @@
 package com.otterdram.otterdram.common.geo.region;
 
+import com.otterdram.otterdram.common.enums.LanguageCode;
 import com.otterdram.otterdram.common.geo.country.Country;
 import com.otterdram.otterdram.common.geo.subregion.Subregion;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -20,7 +21,7 @@ import java.util.Map;
  *   created_at timestamp
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
- *   wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
+ *   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
  * }
  * </pre>
  */
@@ -39,7 +40,7 @@ public class Region {
 
     @Type(JsonType.class)
     @Column(name = "translations", columnDefinition = "text")
-    private Map<String, String> translations;
+    private Map<LanguageCode, String> translations;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

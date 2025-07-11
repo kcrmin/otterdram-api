@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  *   created_at timestamp [not null, default: `'2014-01-01 12:01:01'`]
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
- *   wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
+ *   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
  * }
  * </pre>
  */

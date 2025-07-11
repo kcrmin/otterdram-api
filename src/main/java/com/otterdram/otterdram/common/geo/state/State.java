@@ -25,7 +25,7 @@ import java.util.List;
  *   created_at timestamp
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
- *   wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
+ *   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
  * }
  * </pre>
  */
