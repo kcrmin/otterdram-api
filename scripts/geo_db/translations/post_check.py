@@ -178,7 +178,7 @@ def main():
         logger = imp.setup_logging(
             base_path=imp.GEO_DB_ROOT,
             log_dir_env="TRANSLATION_LOG_DIR",
-            log_file_env="POST_CHECK_LOG_FILE",
+            log_file_env="TRANSLATION_LOG_FILE",
         )
 
         # 명령행 인수로 특정 테이블 지정 가능
