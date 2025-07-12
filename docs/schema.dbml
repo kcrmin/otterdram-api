@@ -197,7 +197,7 @@ Table regions {
   created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
 }
 // ---- 하위 지역 ----
 Table subregions {
@@ -208,7 +208,7 @@ Table subregions {
   created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q990'"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q990'"]
 }
 // ---- 국가 ----
 Table countries {
@@ -234,11 +234,11 @@ Table countries {
   latitude numeric(10,8)
   longitude numeric(11,8)
   emoji varchar(191) [note: "국기 이모지, 예: '🇰🇷'"]
-  emojiU varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
+  "emojiU" varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
   created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
 }
 // ---- 주/도 ----
 Table states {
@@ -256,7 +256,7 @@ Table states {
   created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
 }
 // ---- 도시 ----
 Table cities {
@@ -271,7 +271,7 @@ Table cities {
   created_at timestamp [not null, default: `'2014-01-01 12:01:01'`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  wikiDataId varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
 }
 
 // ================== 사용자(유저) ==================
@@ -369,6 +369,7 @@ Table user_reports {
   id bigint [pk, increment]
   reporter_id bigint [ref: > users.id, not null]
   reported_user_id bigint [ref: > users.id, not null]
+  language_code LanguageCode [not null]
   report_reason varchar(100) [not null, note: "예: '욕설', '스팸' 등"]
   report_description text
   reported_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -380,6 +381,7 @@ Table content_reports {
   reporter_id bigint [ref: > users.id, not null]
   target_type ReportTargetType [not null]
   target_id bigint [not null]
+  language_code LanguageCode [not null]
   report_reason varchar(100) [not null]
   report_description text
   reported_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -523,7 +525,7 @@ Table categories {
   parent_id bigint [ref: > categories.id, default: null]
   path varchar(100) [not null, note: "materialized path, 예: '1/2/3'"]
   depth smallint [not null, note: "카테고리 깊이, 루트=0, 예: 1=1단계, 2=2단계"]
-  description text [note: "다국어 JSON"]
+  descriptions text [note: "다국어 JSON"]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -539,11 +541,10 @@ Table companies {
   parent_company_id bigint [ref: > companies.id]
   company_logo varchar(255)
   company_name varchar(100) [not null, unique]
-  translation text [note: "다국어 지원 이름"]
-  description text [note: "다국어 지원"]
+  translations text [note: "다국어 지원 이름"]
+  descriptions text [note: "다국어 지원"]
   independent_bottler boolean [not null, default: false]
   status DataStatus [not null, default: 'PENDING']
-
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -577,12 +578,12 @@ Table distilleries {
   company_id bigint [ref: > companies.id]
   distillery_logo varchar(255)
   distillery_name varchar(100) [not null, unique]
-  translation text [note: "다국어 지원 이름"]
+  translations text [note: "다국어 지원 이름"]
   country_id bigint [ref: > countries.id]
   city_id bigint [ref: > cities.id]
   address varchar(255)
   established_in date
-  description text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -625,8 +626,8 @@ Table brands {
   company_id bigint [ref: > companies.id]
   brand_logo varchar(255)
   brand_name varchar(100) [not null, unique]
-  translation text [note: "다국어 지원 이름"]
-  description text [note: "다국어 지원"]
+  translations text [note: "다국어 지원 이름"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -659,8 +660,8 @@ Table collections {
   id bigint [pk, increment]
   brand_id bigint [ref: > brands.id, not null]
   collection_name varchar(100) [not null]
-  translation text [note: "다국어 지원 이름"]
-  description text [note: "다국어 지원"]
+  translations text [note: "다국어 지원 이름"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -696,8 +697,8 @@ Table models {
   category_id bigint [ref: > categories.id, note: "예: 버번, 블랜디드 등"]
   model_image varchar(255)
   model_name varchar(100) [not null]
-  translation text [note: "다국어 지원 이름"]
-  description text [note: "다국어 지원"]
+  translations text [note: "다국어 지원 이름"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -739,7 +740,7 @@ Table releases {
   model_id bigint [ref: > models.id, not null]
   release_image varchar(255)
   release_name varchar(100) [not null]
-  translation text [note: "다국어 지원 이름"]
+  translations text [note: "다국어 지원 이름"]
   age_statement_type AgeStatementType [not null, default: 'STATED']
   stated_age smallint [note: "age_type이 'STATED'일 때만 값이 있음"]
   distilled_on date
@@ -752,7 +753,7 @@ Table releases {
   chill_filtered TernaryStatus [not null, default: 'UNKNOWN']
   natural_color TernaryStatus [not null, default: 'UNKNOWN']
   peat_level PeatLevel
-  description text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -786,8 +787,8 @@ Table release_revisions {
 Table cask_materials {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
-  translation text [note: "다국어 지원"]
-  description text [note: "다국어 지원"]
+  translations text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -800,9 +801,9 @@ Table cask_materials {
 Table cask_types {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
-  translation text [note: "다국어 지원"]
+  translations text [note: "다국어 지원"]
   size_litre INT [note: "예: 200L, 500L 등"]
-  description text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
   status DataStatus [not null, default: 'PENDING']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -815,12 +816,12 @@ Table cask_types {
 Table casks {
   id bigint [pk, increment]
   name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
-  translation text [note: "다국어 지원"]
+  translations text [note: "다국어 지원"]
   fill_number FillNumber
   category_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
   material_id bigint [ref: > cask_materials.id]
   shape_id bigint [ref: > cask_types.id]
-  description text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
   created_at timestamp [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null]
@@ -965,3 +966,5 @@ Table model_comment_votes {
     (model_comment_id, created_by) [unique]
   }
 }
+
+
