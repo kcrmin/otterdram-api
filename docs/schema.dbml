@@ -1,6 +1,6 @@
 // OtterDram DB Schema
-// version: 1.1.0
-// last updated: 2025-07-08
+// version: 2.0.0
+// last updated: 2025-07-14
 // author: kcrmin
 
 // ======================= ENUMS (상수 타입) =======================
@@ -530,6 +530,8 @@ Table categories {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 
 // ================== 브랜드 & 위스키 구조 ==================
@@ -549,8 +551,8 @@ Table companies {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table company_revisions {
   id bigint [pk, increment]
@@ -590,8 +592,8 @@ Table distilleries {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table distillery_revisions {
   id bigint [pk, increment]
@@ -633,8 +635,8 @@ Table brands {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table brand_revisions {
   id bigint [pk, increment]
@@ -667,8 +669,8 @@ Table collections {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table collection_revisions {
   id bigint [pk, increment]
@@ -704,8 +706,8 @@ Table models {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table model_revisions {
   id bigint [pk, increment]
@@ -759,12 +761,109 @@ Table releases {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table release_revisions {
   id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
+  schema_version varchar(16) [not null, default: '1.0']
+  revision_data jsonb [not null]
+  diff_data jsonb
+  status DataStatus [not null, default: 'PENDING']
+  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
+
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  reviewed_at timestamp
+  reviewed_by bigint [ref: > users.id]
+
+}
+
+// ================== 캐스크(CASKS) ==================
+// ---- 캐스크 재질 ----
+Table cask_materials {
+  id bigint [pk, increment]
+  name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
+  translations text [note: "다국어 지원"]
+  descriptions text [note: "다국어 지원"]
+  status DataStatus [not null, default: 'PENDING']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
+}
+
+Table cask_material_revisions {
+  id bigint [pk, increment]
+  cask_id bigint [ref: > casks.id, not null]
+  schema_version varchar(16) [not null, default: '1.0']
+  revision_data jsonb [not null]
+  diff_data jsonb
+  status DataStatus [not null, default: 'PENDING']
+  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
+
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  reviewed_at timestamp
+  reviewed_by bigint [ref: > users.id]
+}
+
+
+// ---- 캐스크 종류 ----
+Table cask_types {
+  id bigint [pk, increment]
+  name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
+  translations text [note: "다국어 지원"]
+  size_litre INT [note: "예: 200L, 500L 등"]
+  descriptions text [note: "다국어 지원"]
+  status DataStatus [not null, default: 'PENDING']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
+}
+
+Table cask_type_revisions {
+  id bigint [pk, increment]
+  cask_type_id bigint [ref: > cask_types.id, not null]
+  schema_version varchar(16) [not null, default: '1.0']
+  revision_data jsonb [not null]
+  diff_data jsonb
+  status DataStatus [not null, default: 'PENDING']
+  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
+
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  reviewed_at timestamp
+  reviewed_by bigint [ref: > users.id]
+}
+
+// ---- 캐스크 마스터 ----
+Table casks {
+  id bigint [pk, increment]
+  name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
+  translations text [note: "다국어 지원"]
+  fill_number FillNumber
+  category_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
+  material_id bigint [ref: > cask_materials.id]
+  shape_id bigint [ref: > cask_types.id]
+  descriptions text [note: "다국어 지원"]
+  created_at timestamp [not null]
+  created_by bigint [ref: > users.id, not null]
+  updated_at timestamp [not null]
+  updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
+}
+
+Table cask_revisions {
+  id bigint [pk, increment]
+  cask_id bigint [ref: > casks.id, not null]
   schema_version varchar(16) [not null, default: '1.0']
   revision_data jsonb [not null]
   diff_data jsonb
@@ -782,53 +881,6 @@ Table release_revisions {
   // }
 }
 
-// ================== 캐스크(CASKS) ==================
-// ---- 캐스크 재질 ----
-Table cask_materials {
-  id bigint [pk, increment]
-  name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
-  translations text [note: "다국어 지원"]
-  descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-}
-// ---- 캐스크 종류 ----
-Table cask_types {
-  id bigint [pk, increment]
-  name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
-  translations text [note: "다국어 지원"]
-  size_litre INT [note: "예: 200L, 500L 등"]
-  descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-}
-// ---- 캐스크 마스터 ----
-Table casks {
-  id bigint [pk, increment]
-  name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
-  translations text [note: "다국어 지원"]
-  fill_number FillNumber
-  category_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
-  material_id bigint [ref: > cask_materials.id]
-  shape_id bigint [ref: > cask_types.id]
-  descriptions text [note: "다국어 지원"]
-  created_at timestamp [not null]
-  created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null]
-  updated_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-}
 // ---- 릴리즈별 캐스크 구성 ----
 Table release_casks {
   id bigint [pk, increment]
