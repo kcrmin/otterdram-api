@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.profile;
 
-import com.otterdram.otterdram.common.audit.TimestampAudit;
+import com.otterdram.otterdram.common.audit.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.Gender;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.domain.user.user.User;
@@ -26,7 +26,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user_profiles")
-public class UserProfile extends TimestampAudit {
+public class UserProfile extends UpdatableTimestamp {
 
     @Id
     @SequenceGenerator(name="user_profile_seq", sequenceName = "user_profile_sequence")
@@ -43,6 +43,7 @@ public class UserProfile extends TimestampAudit {
     @Column(name = "bio", columnDefinition = "text")
     private String bio;
 
+    // TODO: Address Embedding
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;

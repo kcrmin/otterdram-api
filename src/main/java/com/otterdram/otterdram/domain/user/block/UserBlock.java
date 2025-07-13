@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.block;
 
-import com.otterdram.otterdram.common.audit.CreatedAtOnlyAudit;
+import com.otterdram.otterdram.common.audit.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -16,7 +16,7 @@ import org.springframework.data.annotation.CreatedBy;
 
 @Entity
 @Table(name = "user_blocks")
-public class UserBlock extends CreatedAtOnlyAudit {
+public class UserBlock extends CreatableTimestamp {
 
     @Id
     @SequenceGenerator(name = "user_block_seq", sequenceName = "user_block_sequence")

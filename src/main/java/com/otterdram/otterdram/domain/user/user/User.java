@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.user;
 
-import com.otterdram.otterdram.common.audit.TimestampAudit;
+import com.otterdram.otterdram.common.audit.timestamp.SoftDeletableTimestamp;
 import com.otterdram.otterdram.common.enums.Privacy;
 import com.otterdram.otterdram.common.enums.UserStatus;
 import com.otterdram.otterdram.domain.user.block.UserBlock;
@@ -35,7 +35,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User extends TimestampAudit {
+public class User extends SoftDeletableTimestamp {
 
     @Id
     @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence")
@@ -64,9 +64,6 @@ public class User extends TimestampAudit {
 
     @Column(name = "last_login_at", nullable = false, columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     private Instant lastLoginAt = Instant.now();
-
-    @Column(name = "deleted_at", columnDefinition = "timestamp")
-    private Instant deletedAt; // Nullable, used for soft delete
 
     // UserProfile relationship
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)

@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.role;
 
-import com.otterdram.otterdram.common.audit.FullAudit;
+import com.otterdram.otterdram.common.audit.auditable.Updatable;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = {"role_name"}))
-public class Role extends FullAudit {
+public class Role extends Updatable {
 
     @Id
     @SequenceGenerator(name = "role_seq", sequenceName = "role_sequence")

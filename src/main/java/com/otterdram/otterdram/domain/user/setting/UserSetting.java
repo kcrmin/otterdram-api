@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.setting;
 
-import com.otterdram.otterdram.common.audit.TimestampAudit;
+import com.otterdram.otterdram.common.audit.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.LanguageCode;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_settings", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"}))
-public class UserSetting extends TimestampAudit {
+public class UserSetting extends UpdatableTimestamp {
 
     @Id
     @SequenceGenerator(name = "user_setting_seq", sequenceName = "user_setting_sequence")

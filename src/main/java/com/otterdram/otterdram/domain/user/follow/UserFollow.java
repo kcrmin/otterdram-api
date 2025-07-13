@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.follow;
 
-import com.otterdram.otterdram.common.audit.CreatedAtOnlyAudit;
+import com.otterdram.otterdram.common.audit.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.common.enums.FollowStatus;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ import org.springframework.data.annotation.CreatedBy;
  */
 @Entity
 @Table(name = "user_follows", uniqueConstraints = @UniqueConstraint(columnNames = {"follower_id", "followee_id"}))
-public class UserFollow extends CreatedAtOnlyAudit {
+public class UserFollow extends CreatableTimestamp {
 
     @Id
     @SequenceGenerator(name = "user_follow_seq", sequenceName = "user_follow_sequence")

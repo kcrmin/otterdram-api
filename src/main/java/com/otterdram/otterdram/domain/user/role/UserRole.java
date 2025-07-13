@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.role;
 
-import com.otterdram.otterdram.common.audit.CreatedAudit;
+import com.otterdram.otterdram.common.audit.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 
@@ -18,7 +18,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_roles", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
-public class UserRole extends CreatedAudit {
+public class UserRole extends CreatableTimestamp {
 
     @Id
     @SequenceGenerator(name= "user_role_seq", sequenceName = "user_role_sequence")

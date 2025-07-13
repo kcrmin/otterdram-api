@@ -1,29 +1,29 @@
-package com.otterdram.otterdram.common.audit;
+package com.otterdram.otterdram.common.audit.auditable;
 
-import com.otterdram.otterdram.domain.user.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-/*
-    createdAt
-    createdBy
+/**
+ * <pre>
+ * createdAt + createdBy
+ * </pre>
  */
-
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class CreatedAudit {
+public abstract class Creatable {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false, updatable = false)
-    private User createdBy;
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private Long createdBy;
 
 }

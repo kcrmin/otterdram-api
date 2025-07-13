@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.social;
 
-import com.otterdram.otterdram.common.audit.CreatedAtOnlyAudit;
+import com.otterdram.otterdram.common.audit.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "user_social_accounts", uniqueConstraints = @UniqueConstraint(columnNames = {"provider", "provider_id"}))
-public class UserSocialAccount extends CreatedAtOnlyAudit {
+public class UserSocialAccount extends CreatableTimestamp {
 
     @Id
     @SequenceGenerator(name = "user_social_account_seq", sequenceName = "user_social_account_sequence")
