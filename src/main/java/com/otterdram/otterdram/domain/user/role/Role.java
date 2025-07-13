@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.role;
 
-import com.otterdram.otterdram.common.audit.auditable.Updatable;
+import com.otterdram.otterdram.common.audit.superclass.Updatable;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

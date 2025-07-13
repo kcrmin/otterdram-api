@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.block;
 
-import com.otterdram.otterdram.common.audit.timestamp.CreatableTimestamp;
+import com.otterdram.otterdram.common.audit.superclass.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;

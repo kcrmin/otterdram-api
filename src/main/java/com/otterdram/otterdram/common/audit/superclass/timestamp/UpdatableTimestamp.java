@@ -1,9 +1,8 @@
-package com.otterdram.otterdram.common.audit.timestamp;
+package com.otterdram.otterdram.common.audit.superclass.timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,21 +12,14 @@ import java.time.Instant;
  * <pre>
  * createdAt
  * updatedAt
- * deletedAt
  * </pre>
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class SoftDeletableTimestamp {
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+public abstract class UpdatableTimestamp extends CreatableTimestamp {
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
 }

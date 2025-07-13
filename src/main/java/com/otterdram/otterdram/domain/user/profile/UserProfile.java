@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.profile;
 
-import com.otterdram.otterdram.common.audit.timestamp.UpdatableTimestamp;
+import com.otterdram.otterdram.common.audit.superclass.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.Gender;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.domain.user.user.User;

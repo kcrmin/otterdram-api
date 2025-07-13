@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.user;
 
-import com.otterdram.otterdram.common.audit.timestamp.SoftDeletableTimestamp;
+import com.otterdram.otterdram.common.audit.superclass.timestamp.SoftDeletableTimestamp;
 import com.otterdram.otterdram.common.enums.Privacy;
 import com.otterdram.otterdram.common.enums.UserStatus;
 import com.otterdram.otterdram.domain.user.block.UserBlock;
@@ -32,7 +32,6 @@ import java.util.List;
  * }
  * </pre>
  */
-
 @Entity
 @Table(name = "users")
 public class User extends SoftDeletableTimestamp {
@@ -65,6 +64,7 @@ public class User extends SoftDeletableTimestamp {
     @Column(name = "last_login_at", nullable = false, columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     private Instant lastLoginAt = Instant.now();
 
+    // =========================== Relationships ===========================
     // UserProfile relationship
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private UserProfile userProfile;

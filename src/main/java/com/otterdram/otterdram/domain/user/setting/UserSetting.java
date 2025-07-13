@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.user.setting;
 
-import com.otterdram.otterdram.common.audit.timestamp.UpdatableTimestamp;
+import com.otterdram.otterdram.common.audit.superclass.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.LanguageCode;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
