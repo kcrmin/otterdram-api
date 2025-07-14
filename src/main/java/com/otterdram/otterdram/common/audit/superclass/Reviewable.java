@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.audit.superclass;
 
-import com.otterdram.otterdram.common.enums.DataStatus;
+import com.otterdram.otterdram.common.enums.RevisionStatus;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -15,8 +15,8 @@ import java.time.Instant;
 public abstract class Reviewable extends Creatable {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'PENDING'")
-    private DataStatus status = DataStatus.PENDING;
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
+    private RevisionStatus status = RevisionStatus.IN_REVIEW;
 
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
@@ -29,10 +29,10 @@ public abstract class Reviewable extends Creatable {
     }
 
     public boolean isPending() {
-        return this.status == DataStatus.PENDING;
+        return this.status == RevisionStatus.IN_REVIEW;
     }
 
-    public void review(Long userId, DataStatus status) {
+    public void review(Long userId, RevisionStatus status) {
         if (!isReviewed() && isPending()) {
             this.reviewedAt = Instant.now();
             this.reviewedBy = userId;
