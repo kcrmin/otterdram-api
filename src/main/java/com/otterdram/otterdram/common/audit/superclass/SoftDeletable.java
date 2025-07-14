@@ -13,7 +13,7 @@ import java.time.Instant;
  * </pre>
  */
 @MappedSuperclass
-public class SoftDeletable extends Updatable {
+public abstract class SoftDeletable extends Updatable {
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
@@ -21,4 +21,23 @@ public class SoftDeletable extends Updatable {
     @Column(name = "deleted_by")
     private Long deletedBy;
 
+    public boolean isDeleted() {
+        return deletedAt != null && deletedBy != null;
+    }
+
+    public void softDelete(Long userId) {
+        if (isDeleted()) {
+            throw new IllegalStateException("Item is already deleted.");
+        }
+        this.deletedAt = Instant.now();
+        this.deletedBy = userId;
+    }
+
+    public void restore() {
+        if (!isDeleted()) {
+            throw new IllegalStateException("Item is not deleted.");
+        }
+        this.deletedAt = null;
+        this.deletedBy = null;
+    }
 }
