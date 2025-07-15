@@ -1,0 +1,75 @@
+package com.otterdram.otterdram.domain.spirits.model;
+
+import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
+import com.otterdram.otterdram.common.enums.DataStatus;
+import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.domain.spirits.collection.Collection;
+import com.otterdram.otterdram.domain.spirits.release.Release;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Model Entity
+ * <pre>
+ * Table models {
+ *   id bigint [pk, increment]
+ *   collection_id bigint [ref: > collections.id, not null]
+ *   category_id bigint [ref: > categories.id, note: "예: 버번, 블랜디드 등"]
+ *   model_image varchar(255)
+ *   model_name varchar(100) [not null]
+ *   translations text [note: "다국어 지원 이름"]
+ *   descriptions text [note: "다국어 지원"]
+ *   status DataStatus [not null, default: 'DRAFT']
+ *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+ *   created_by bigint [ref: > users.id, not null]
+ *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+ *   updated_by bigint [ref: > users.id, not null]
+ *   deleted_at timestamp
+ *   deleted_by bigint [ref: > users.id]
+ * }
+ * </pre>
+ */
+
+@Entity
+@Table(name = "models")
+public class Model extends SoftDeletable {
+
+    @Id
+    @SequenceGenerator(name = "model_seq", sequenceName = "model_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "model_seq")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private Collection collection;
+
+    // TODO: Category
+
+    @Column(name = "model_image", length = 255)
+    private String modelImage;
+
+    @Column(name = "model_name", nullable = false, length = 100)
+    private String modelName;
+
+    @Type(JsonType.class)
+    @Column(name = "translations", columnDefinition = "json")
+    private Map<LanguageCode, String> translations;
+
+    @Type(JsonType.class)
+    @Column(name = "descriptions", columnDefinition = "json")
+    private Map<LanguageCode, String> descriptions;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
+    private DataStatus status = DataStatus.DRAFT;
+
+    // =========================== Relationships ===========================
+    @OneToMany(mappedBy = "model", fetch = FetchType.LAZY)
+    private List<Release> releases = new ArrayList<>();
+
+}
