@@ -3,6 +3,7 @@ package com.otterdram.otterdram.domain.user.profile;
 import com.otterdram.otterdram.common.audit.superclass.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.DataStatus;
 import com.otterdram.otterdram.common.enums.Gender;
+import com.otterdram.otterdram.common.geo.address.Address;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
@@ -16,7 +17,9 @@ import java.util.Date;
  *   user_id bigint [ref: - users.id, unique, not null]
  *   display_name varchar(100) [not null]
  *   bio text
+ *   country_id bigint [ref: > countries.id]
  *   city_id bigint [ref: > cities.id]
+ *   address varchar(255)
  *   birthday date [not null]
  *   gender Gender [not null, default: 'UNSPECIFIED']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -44,10 +47,8 @@ public class UserProfile extends UpdatableTimestamp {
     @Column(name = "bio", columnDefinition = "text")
     private String bio;
 
-    // TODO: Address Embedding
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id")
-    private City city;
+    @Embedded
+    private Address address;
 
     @Column(name = "birthday", nullable = false)
     private Date birthday;
