@@ -3,6 +3,7 @@ package com.otterdram.otterdram.common.audit.service;
 import com.otterdram.otterdram.common.audit.superclass.AuthorModifiable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <T> the type of the entity that extends AuthorModifiable
  * @param <ID> the type of the entity's identifier (usually Long or String)
  */
+
+@Service
 public abstract class AuthorModifiableService<T extends AuthorModifiable, ID> extends SoftDeletableService<T, ID> {
 
     protected abstract JpaRepository<T, ID> getRepository();

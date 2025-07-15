@@ -37,6 +37,4 @@ public class UserSocialAccount extends CreatableTimestamp {
     @Column(name = "provider_id", nullable = false, length = 255)
     private String providerId;
 
-
-
 }

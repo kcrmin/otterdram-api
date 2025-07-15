@@ -4,6 +4,7 @@ import com.otterdram.otterdram.common.audit.superclass.Reviewable;
 import com.otterdram.otterdram.common.enums.DataStatus;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <T> the type of the entity that extends Reviewable
  * @param <ID> the type of the entity's identifier (usually Long or String)
  */
+
+@Service
 public abstract class ReviewableService<T extends Reviewable, ID> {
 
     protected abstract JpaRepository<T, ID> getRepository();
