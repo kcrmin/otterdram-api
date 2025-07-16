@@ -1,4 +1,4 @@
-package com.otterdram.otterdram.common.enums;
+package com.otterdram.otterdram.common.enums.common;
 
 import lombok.Getter;
 

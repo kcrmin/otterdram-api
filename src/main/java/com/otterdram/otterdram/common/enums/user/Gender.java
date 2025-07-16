@@ -1,4 +1,4 @@
-package com.otterdram.otterdram.common.enums;
+package com.otterdram.otterdram.common.enums.user;
 
 public enum Gender {
     MALE,

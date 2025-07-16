@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.geo.country;
 
-import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.common.geo.region.Region;
 import com.otterdram.otterdram.common.geo.state.State;

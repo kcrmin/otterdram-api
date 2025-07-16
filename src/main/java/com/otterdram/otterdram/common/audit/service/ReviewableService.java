@@ -1,7 +1,7 @@
 package com.otterdram.otterdram.common.audit.service;
 
 import com.otterdram.otterdram.common.audit.superclass.Reviewable;
-import com.otterdram.otterdram.common.enums.DataStatus;
+import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
