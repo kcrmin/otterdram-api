@@ -1,6 +1,6 @@
 // OtterDram DB Schema
-// version: 2.0.0
-// last updated: 2025-07-14
+// version: 3.0.0
+// last updated: 2025-07-15
 // author: kcrmin
 
 // ======================= ENUMS (상수 타입) =======================
@@ -186,96 +186,9 @@ Enum PeatLevel {
   UNKOWN
 }
 
-// ================== 지역 정보 (Geo) ==================
-// 참고: https://github.com/dr5hn/countries-states-cities-database
+// === USER DATA ===
 
-// ---- 대륙/지역 ----
-Table regions {
-  id bigint [pk, not null, increment]
-  name varchar(100) [not null]
-  translations text [note: "다국어 JSON, 예: {'ko':'유럽'}"]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
-}
-// ---- 하위 지역 ----
-Table subregions {
-  id bigint [pk, not null, increment]
-  name varchar(100) [not null]
-  translations text [note: "다국어 JSON, 예: {'ko':'서유럽'}"]
-  region_id bigint [not null, ref: > regions.id]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q990'"]
-}
-// ---- 국가 ----
-Table countries {
-  id bigint [pk, not null, increment]
-  name varchar(100) [not null, note: "영문 국가명, 예: 'South Korea'"]
-  iso3 char(3) [note: "ISO 3166-1 alpha-3, 예: 'KOR'"]
-  numeric_code char(3) [note: "ISO 3166-1 numeric, 예: '410'"]
-  iso2 char(2) [note: "ISO 3166-1 alpha-2, 예: 'KR'"]
-  phonecode varchar(255) [note: "국제전화코드, 예: '82'"]
-  capital varchar(255) [note: "수도, 예: 'Seoul'"]
-  currency varchar(255) [note: "통화코드, 예: 'KRW'"]
-  currency_name varchar(255) [note: "통화명, 예: 'South Korean won'"]
-  currency_symbol varchar(255) [note: "통화기호, 예: '₩'"]
-  tld varchar(255) [note: "최상위 도메인, 예: '.kr'"]
-  native varchar(255) [note: "자국어 국가명, 예: '대한민국'"]
-  region varchar(255) [note: "상위 지역명(영문), 예: 'Asia'"]
-  region_id bigint [ref: > regions.id]
-  subregion varchar(255) [note: "하위 지역명(영문), 예: 'Eastern Asia'"]
-  subregion_id bigint [ref: > subregions.id]
-  nationality varchar(255) [note: "국민명, 예: 'Korean'"]
-  timezones text [note: "JSON 배열, 예: ['UTC+9']"]
-  translations text [note: "다국어 JSON, 예: {'ko':'대한민국'}"]
-  latitude numeric(10,8)
-  longitude numeric(11,8)
-  emoji varchar(191) [note: "국기 이모지, 예: '🇰🇷'"]
-  "emojiU" varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
-}
-// ---- 주/도 ----
-Table states {
-  id bigint [pk, not null, increment]
-  name varchar(255) [not null, note: "주/도 명칭, 예: 'California', '서울특별시'"]
-  country_id bigint [not null, ref: > countries.id]
-  country_code char(2) [not null, note: "ISO 국가코드, 예: 'US', 'KR'"]
-  fips_code varchar(255) [note: "미국 등 FIPS 코드, 예: 'CA'"]
-  iso2 varchar(255) [note: "ISO 2자리 주/도 코드, 예: 'CA', '11'"]
-  type varchar(191) [note: "행정구역 종류, 예: 'State', 'Province', 'Special City'"]
-  level integer [note: "행정 단계, 예: 1=광역, 2=시/군 등"]
-  parent_id integer
-  latitude numeric(10,8)
-  longitude numeric(11,8)
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
-}
-// ---- 도시 ----
-Table cities {
-  id bigint [pk, not null, increment]
-  name varchar(255) [not null, note: "도시명(영문), 예: 'Seoul', 'San Francisco'"]
-  state_id bigint [not null, ref: > states.id]
-  state_code varchar(255) [not null, note: "주/도 코드, 예: 'CA', '11'"]
-  country_id bigint [not null, ref: > countries.id]
-  country_code char(2) [not null, note: "ISO 국가코드, 예: 'US', 'KR'"]
-  latitude numeric(10,8) [not null]
-  longitude numeric(11,8) [not null]
-  created_at timestamp [not null, default: `'2014-01-01 12:01:01'`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
-  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
-}
-
-// ================== 사용자(유저) ==================
-// ---- 사용자 ----
+// -- 사용자 정보 --
 Table users {
   id id [pk, increment]
   username varchar(50) [not null, unique, note: "@username"]
@@ -289,19 +202,19 @@ Table users {
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   deleted_at timestamp
 }
-// ---- 사용자 정보 ----
 Table user_profiles {
   id bigint [pk, increment]
   user_id bigint [ref: - users.id, unique, not null]
   display_name varchar(100) [not null]
   bio text
+  country_id bigint [ref: > countries.id]
   city_id bigint [ref: > cities.id]
+  address varchar(255)
   birthday date [not null]
   gender Gender [not null, default: 'UNSPECIFIED']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
-// ---- 소셜 로그인 ----
 Table user_social_accounts {
   id bigint [pk, increment]
   user_id bigint [not null, ref: > users.id]
@@ -312,7 +225,6 @@ Table user_social_accounts {
     (provider, provider_id) [unique]
   }
 }
-// ---- 사용자 설정 ----
 Table user_settings {
   id bigint [pk, increment]
   user_id bigint [ref: - users.id, not null, unique]
@@ -325,8 +237,6 @@ Table user_settings {
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
-
-// ---- 사용자 역할 ----
 Table user_roles {
   id bigint [pk, increment]
   user_id bigint [ref: > users.id, not null]
@@ -337,7 +247,6 @@ Table user_roles {
     (user_id, role_id) [unique]
   }
 }
-
 Table roles {
   id bigint [pk, increment]
   role_name varchar(50) [unique, not null, note: "ROLE_REVIEWER, ROLE_EDITOR, ROLE_ADMIN, ROLE_USER"]
@@ -346,8 +255,6 @@ Table roles {
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
 }
-
-// ---- 팔로우 관계 ----
 Table user_follows {
   id bigint [pk, increment]
   follower_id bigint [ref: > users.id, not null]
@@ -355,7 +262,6 @@ Table user_follows {
   status FollowStatus [not null, default: `APPROVED`]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
-// ---- 사용자 차단 ----
 Table user_blocks {
   id bigint [pk, increment]
   blocker_id bigint [ref: > users.id, not null]
@@ -363,8 +269,10 @@ Table user_blocks {
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
 
-// ================== 신고/리포트 ==================
-// ---- 유저 신고 ----
+
+// === REPORT ===
+
+// -- 신고 / 리포트 --
 Table user_reports {
   id bigint [pk, increment]
   reporter_id bigint [ref: > users.id, not null]
@@ -375,7 +283,6 @@ Table user_reports {
   reported_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   status ReportStatus [not null, default: 'PENDING']
 }
-// ---- 컨텐츠 신고 ----
 Table content_reports {
   id bigint [pk, increment]
   reporter_id bigint [ref: > users.id, not null]
@@ -388,8 +295,10 @@ Table content_reports {
   status ReportStatus [not null, default: 'PENDING']
 }
 
-// ================== SHELVES / BOTTLES / VIALS / CONSUMPTION / REVIEWS ==================
-// ---- 선반(유저 컬렉션) ----
+
+// === USER-GENERATED CONTENT (UGC) ===
+
+// -- 선반 --
 Table shelves {
   id bigint [pk, increment]
   owner_id bigint [not null, ref: > users.id]
@@ -408,7 +317,7 @@ Table shelf_share_tokens {
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
 }
 
-// ---- 소유 병 정보 ----
+// -- 선반 병 --
 Table bottles {
   id bigint [pk, increment]
   shelf_id bigint [ref: > shelves.id, not null]
@@ -449,7 +358,7 @@ Table bottle_transfer_tokens {
   }
 }
 
-// ---- 소분병(바이알) ----
+// -- 선반 바이알 --
 Table vials {
   id bigint [pk, increment]
   shelf_id bigint [ref: > shelves.id, not null]
@@ -488,7 +397,7 @@ Table vial_transfer_tokens {
   }
 }
 
-// ---- 리뷰 ----
+// -- 리뷰 --
 Table reviews {
   review_id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
@@ -517,7 +426,38 @@ Table reviews {
   updated_by bigint [ref: > users.id, not null]
 }
 
-// ================== 카테고리 (마스터) ==================
+// -- 댓글 & 투표 --
+Table entity_comments {
+  id bigint [pk, increment]
+  entity_type CommentTargetType [not null]
+  entity_id bigint [not null]
+  parent_id bigint [ref: > entity_comments.id]
+  language_code LanguageCode [not null]
+  depth smallint [not null, note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
+  comment text [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  modified_at timestamp
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
+}
+Table comment_votes {
+  id bigint [pk, increment]
+  entity_comment_id bigint [ref: > entity_comments.id]
+  vote_type VoteType [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_by bigint [ref: > users.id, not null]
+  indexes {
+    (entity_comment_id, created_by) [unique]
+  }
+}
+
+
+// === DOMAIN MASTER DATA ===
+
+// -- 카테고리 --
 Table categories {
   id bigint [pk, increment]
   name varchar(255) [not null, note: "카테고리명, 예: 'Single Malt', 'Bourbon', 'Blended'"]
@@ -534,10 +474,7 @@ Table categories {
   deleted_by bigint [ref: > users.id]
 }
 
-// ================== 브랜드 & 위스키 구조 ==================
-// (기업 - 증류소 - 브랜드 - 컬렉션 - 모델 - 리리즈)
-
-// ---- 기업 ----
+// -- 위스키 구조: 회사 → 증류소 → 브랜드 → 컬렉션 → 모델 → 릴리즈 --
 Table companies {
   id bigint [pk, increment]
   parent_company_id bigint [ref: > companies.id]
@@ -546,7 +483,7 @@ Table companies {
   translations text [note: "다국어 지원 이름"]
   descriptions text [note: "다국어 지원"]
   independent_bottler boolean [not null, default: false]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -554,27 +491,6 @@ Table companies {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table company_revisions {
-  id bigint [pk, increment]
-  company_id bigint [ref: > companies.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (company_id)
-  //   (company_id) [unique, where: "is_latest = true"]
-  // }
-}
-
-// ---- 증류소 ----
 Table distilleries {
   id bigint [pk, increment]
   company_id bigint [ref: > companies.id]
@@ -584,10 +500,9 @@ Table distilleries {
   country_id bigint [ref: > countries.id]
   city_id bigint [ref: > cities.id]
   address varchar(255)
-  established_in date
   descriptions text [note: "다국어 지원"]
   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -595,26 +510,6 @@ Table distilleries {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table distillery_revisions {
-  id bigint [pk, increment]
-  distillery_id bigint [ref: > distilleries.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (distillery_id)
-  //   (distillery_id) [unique, where: "is_latest = true"]
-  // }
-}
-// ---- 브랜드-증류소 관계 ----
 Table brand_distillery_relations {
   id bigint [pk, increment]
   brand_id bigint [ref: > brands.id, not null]
@@ -622,7 +517,6 @@ Table brand_distillery_relations {
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
 }
-// ---- 브랜드 ----
 Table brands {
   id bigint [pk, increment]
   company_id bigint [ref: > companies.id]
@@ -630,7 +524,7 @@ Table brands {
   brand_name varchar(100) [not null, unique]
   translations text [note: "다국어 지원 이름"]
   descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -638,33 +532,13 @@ Table brands {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table brand_revisions {
-  id bigint [pk, increment]
-  brand_id bigint [ref: > brands.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (brand_id)
-  //   (brand_id) [unique, where: "is_latest = true"]
-  // }
-}
-// ---- 컬렉션(시리즈) ----
 Table collections {
   id bigint [pk, increment]
   brand_id bigint [ref: > brands.id, not null]
   collection_name varchar(100) [not null]
   translations text [note: "다국어 지원 이름"]
   descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -672,27 +546,6 @@ Table collections {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table collection_revisions {
-  id bigint [pk, increment]
-  collection_id bigint [ref: > collections.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (collection_id)
-  //   (collection_id) [unique, where: "is_latest = true"]
-  // }
-}
-
-// ---- 모델 (개별 상품군) ----
 Table models {
   id bigint [pk, increment]
   collection_id bigint [ref: > collections.id, not null]
@@ -701,7 +554,7 @@ Table models {
   model_name varchar(100) [not null]
   translations text [note: "다국어 지원 이름"]
   descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -709,26 +562,6 @@ Table models {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table model_revisions {
-  id bigint [pk, increment]
-  model_id bigint [ref: > models.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (model_id)
-  //   (model_id) [unique, where: "is_latest = true"]
-  // }
-}
-// ---- 릴리즈-증류소 관계 ----
 Table release_distillery_relations {
   id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
@@ -736,27 +569,26 @@ Table release_distillery_relations {
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
 }
-// ---- 릴리즈 (출시 상품) ----
 Table releases {
   id bigint [pk, increment]
   model_id bigint [ref: > models.id, not null]
   release_image varchar(255)
   release_name varchar(100) [not null]
   translations text [note: "다국어 지원 이름"]
-  age_statement_type AgeStatementType [not null, default: 'STATED']
+  descriptions text [note: "다국어 지원"]
+  age_statement_type AgeStatementType [not null, default: 'UNKNOWN']
   stated_age smallint [note: "age_type이 'STATED'일 때만 값이 있음"]
   distilled_on date
   bottled_on date
-  bottling_strength_type BottlingStrengthType [default: 'UNKNOWN']
+  bottling_strength_type BottlingStrengthType [not null, default: 'UNKNOWN']
   abv decimal(5,2) [not null]
-  limited_edition TernaryStatus [not null, default: 'UNKNOWN', note: "한정판"]
-  released_bottles varchar(32) [note: "총 발매병수(예: '2000', '100/500' 등)"]
-  single_cask TernaryStatus [not null, default: 'UNKNOWN']
-  chill_filtered TernaryStatus [not null, default: 'UNKNOWN']
-  natural_color TernaryStatus [not null, default: 'UNKNOWN']
-  peat_level PeatLevel
-  descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  limited_edition boolean [note: "한정판: NULL은 UNKNOWN"]
+  released_bottles varchar(32) [note: "총 발매병수(예: '2000', '≈500' 등)"]
+  bottling_format_type BottlingFormatType [not null, default: 'UNKNOWN']
+  chill_filtered boolean [note: "NULL은 UNKNOWN"]
+  natural_color boolean [note: "NULL은 UNKNOWN"]
+  peat_level PeatLevel [not null, default: 'UNKNOWN']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -764,30 +596,14 @@ Table releases {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table release_revisions {
-  id bigint [pk, increment]
-  release_id bigint [ref: > releases.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
 
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-}
-
-// ================== 캐스크(CASKS) ==================
-// ---- 캐스크 재질 ----
+// -- 캐스크 (Casks) --
 Table cask_materials {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
   translations text [note: "다국어 지원"]
   descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -795,31 +611,13 @@ Table cask_materials {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-
-Table cask_material_revisions {
-  id bigint [pk, increment]
-  cask_id bigint [ref: > casks.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-}
-
-
-// ---- 캐스크 종류 ----
 Table cask_types {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
   translations text [note: "다국어 지원"]
   size_litre INT [note: "예: 200L, 500L 등"]
   descriptions text [note: "다국어 지원"]
-  status DataStatus [not null, default: 'PENDING']
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -827,23 +625,6 @@ Table cask_types {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-
-Table cask_type_revisions {
-  id bigint [pk, increment]
-  cask_type_id bigint [ref: > cask_types.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-}
-
-// ---- 캐스크 마스터 ----
 Table casks {
   id bigint [pk, increment]
   name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
@@ -853,6 +634,7 @@ Table casks {
   material_id bigint [ref: > cask_materials.id]
   shape_id bigint [ref: > cask_types.id]
   descriptions text [note: "다국어 지원"]
+  status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null]
@@ -860,28 +642,6 @@ Table casks {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-
-Table cask_revisions {
-  id bigint [pk, increment]
-  cask_id bigint [ref: > casks.id, not null]
-  schema_version varchar(16) [not null, default: '1.0']
-  revision_data jsonb [not null]
-  diff_data jsonb
-  status DataStatus [not null, default: 'PENDING']
-  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
-
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
-  reviewed_by bigint [ref: > users.id]
-
-  // indexes {
-  //   (release_id)
-  //   (release_id) [unique, where: "is_latest = true"]
-  // }
-}
-
-// ---- 릴리즈별 캐스크 구성 ----
 Table release_casks {
   id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
@@ -892,131 +652,117 @@ Table release_casks {
   created_by bigint [ref: > users.id, not null]
 }
 
-// ================== 키워드 ==================
-// (브랜드, 증류소 등 엔터티별 키워드 다국어 저장)
-Table company_tags {
+// -- 리비전 (수정 이력) --
+Table entity_revisions {
   id bigint [pk, increment]
-  company_id bigint [ref: > companies.id, not null]
-  language_code LanguageCode [not null]
-  tag varchar(50) [not null]
+  entity_type RevisionEntityType [not null, note: "수정 대상 엔티티 종류"]
+  entity_id bigint [not null, note: "수정 대상 엔티티 ID"]
+  schema_version varchar(16) [not null, default: '1.0']
+  revision_data jsonb [not null]
+  diff_data jsonb
+  is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
+  status RevisionStatus [not null, default: 'IN_REVIEW']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
+  reviewed_at timestamp
+  reviewed_by bigint [ref: > users.id]
+
+  // indexes {
+  //   (entity_type, entity_id, is_latest = true) [unique]
+  // }
 }
-Table distillery_tags {
+
+// -- 키워드 태깅 --
+Table entity_tags {
   id bigint [pk, increment]
-  distillery_id bigint [ref: > distilleries.id, not null]
-  language_code LanguageCode [not null]
-  tag varchar(50) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-}
-Table brand_tags {
-  id bigint [pk, increment]
-  brand_id bigint [ref: > brands.id, not null]
-  language_code LanguageCode [not null]
-  tag varchar(50) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-}
-Table collection_tags {
-  id bigint [pk, increment]
-  collection_id bigint [ref: > collections.id, not null]
-  language_code LanguageCode [not null]
-  tag varchar(50) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-}
-Table model_tags {
-  id bigint [pk, increment]
-  model_id bigint [ref: > models.id, not null]
-  language_code LanguageCode [not null]
-  tag varchar(50) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-}
-Table release_tags {
-  id bigint [pk, increment]
-  release_id bigint [ref: > releases.id, not null]
+  entity_type TagEntityType [not null, note: "태그 대상 엔티티 종류"]
+  entity_id bigint [not null, note: "태그 대상 엔티티 ID"]
   language_code LanguageCode [not null]
   tag varchar(50) [not null]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
 }
 
-// ================== 댓글 & 투표 ==================
-// ---- 브랜드 댓글 (투표)----
-Table brand_comments {
-  id bigint [pk, increment]
-  brand_id bigint [ref: > brands.id, not null]
-  parent_id bigint [ref: > brand_comments.id, note: "parent_id를 갖고 있는 경우 안됨"]
-  language_code LanguageCode [not null]
-  depth smallint [not null, note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
-  comment text [not null]
-  is_updated boolean [default: false, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
+
+// === GEO DATA ===
+
+// -- 지역 정보: 대륙 → 하위 지역 → 국가 → 주/도 → 도시  --
+Table regions {
+  id bigint [pk, not null, increment]
+  name varchar(100) [not null]
+  translations text [note: "다국어 JSON, 예: {'ko':'유럽'}"]
+  created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  deleted_at timestamp
+  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
 }
-Table brand_comment_votes {
-  id bigint [pk, increment]
-  brand_comment_id bigint [ref: > brand_comments.id, not null]
-  vote_type VoteType [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  indexes {
-    (brand_comment_id, created_by) [unique]
-  }
-}
-
-// ---- 컬렉션 댓글 (투표)----
-Table collection_comments {
-  id bigint [pk, increment]
-  collection_id bigint [ref: > collections.id, not null]
-  parent_id bigint [ref: > collection_comments.id]
-  language_code LanguageCode [not null]
-  depth smallint [not null, note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
-  comment text [not null]
-  is_updated boolean [default: false, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
+Table subregions {
+  id bigint [pk, not null, increment]
+  name varchar(100) [not null]
+  translations text [note: "다국어 JSON, 예: {'ko':'서유럽'}"]
+  region_id bigint [not null, ref: > regions.id]
+  created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  deleted_at timestamp
+  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q990'"]
 }
-Table collection_comment_votes {
-  id bigint [pk, increment]
-  collection_comment_id bigint [ref: > collection_comments.id, not null]
-  vote_type VoteType [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  indexes {
-    (collection_comment_id, created_by) [unique]
-  }
-}
-
-// ---- 모델 댓글 (투표)----
-Table model_comments {
-  id bigint [pk, increment]
-  model_id bigint [ref: > models.id, not null]
-  parent_id bigint [ref: > model_comments.id]
-  language_code LanguageCode [not null]
-  depth smallint [not null, note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
-  comment text [not null]
-  is_updated boolean [default: false, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
+Table countries {
+  id bigint [pk, not null, increment]
+  name varchar(100) [not null, note: "영문 국가명, 예: 'South Korea'"]
+  iso3 char(3) [note: "ISO 3166-1 alpha-3, 예: 'KOR'"]
+  numeric_code char(3) [note: "ISO 3166-1 numeric, 예: '410'"]
+  iso2 char(2) [note: "ISO 3166-1 alpha-2, 예: 'KR'"]
+  phonecode varchar(255) [note: "국제전화코드, 예: '82'"]
+  capital varchar(255) [note: "수도, 예: 'Seoul'"]
+  currency varchar(255) [note: "통화코드, 예: 'KRW'"]
+  currency_name varchar(255) [note: "통화명, 예: 'South Korean won'"]
+  currency_symbol varchar(255) [note: "통화기호, 예: '₩'"]
+  tld varchar(255) [note: "최상위 도메인, 예: '.kr'"]
+  native varchar(255) [note: "자국어 국가명, 예: '대한민국'"]
+  region varchar(255) [note: "상위 지역명(영문), 예: 'Asia'"]
+  region_id bigint [ref: > regions.id]
+  subregion varchar(255) [note: "하위 지역명(영문), 예: 'Eastern Asia'"]
+  subregion_id bigint [ref: > subregions.id]
+  nationality varchar(255) [note: "국민명, 예: 'Korean'"]
+  timezones text [note: "JSON 배열, 예: ['UTC+9']"]
+  translations text [note: "다국어 JSON, 예: {'ko':'대한민국'}"]
+  latitude numeric(10,8)
+  longitude numeric(11,8)
+  emoji varchar(191) [note: "국기 이모지, 예: '🇰🇷'"]
+  "emojiU" varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
+  created_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  deleted_at timestamp
+  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
 }
-Table model_comment_votes {
-  id bigint [pk, increment]
-  model_comment_id bigint [ref: > model_comments.id, not null]
-  vote_type VoteType [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_by bigint [ref: > users.id, not null]
-  indexes {
-    (model_comment_id, created_by) [unique]
-  }
+Table states {
+  id bigint [pk, not null, increment]
+  name varchar(255) [not null, note: "주/도 명칭, 예: 'California', '서울특별시'"]
+  country_id bigint [not null, ref: > countries.id]
+  country_code char(2) [not null, note: "ISO 국가코드, 예: 'US', 'KR'"]
+  fips_code varchar(255) [note: "미국 등 FIPS 코드, 예: 'CA'"]
+  iso2 varchar(255) [note: "ISO 2자리 주/도 코드, 예: 'CA', '11'"]
+  type varchar(191) [note: "행정구역 종류, 예: 'State', 'Province', 'Special City'"]
+  level integer [note: "행정 단계, 예: 1=광역, 2=시/군 등"]
+  parent_id integer
+  latitude numeric(10,8)
+  longitude numeric(11,8)
+  created_at timestamp
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
 }
-
-
+Table cities {
+  id bigint [pk, not null, increment]
+  name varchar(255) [not null, note: "도시명(영문), 예: 'Seoul', 'San Francisco'"]
+  state_id bigint [not null, ref: > states.id]
+  state_code varchar(255) [not null, note: "주/도 코드, 예: 'CA', '11'"]
+  country_id bigint [not null, ref: > countries.id]
+  country_code char(2) [not null, note: "ISO 국가코드, 예: 'US', 'KR'"]
+  latitude numeric(10,8) [not null]
+  longitude numeric(11,8) [not null]
+  created_at timestamp [not null, default: `'2014-01-01 12:01:01'`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
+  "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
+}

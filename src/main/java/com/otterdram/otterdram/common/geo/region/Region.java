@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.geo.region;
 
-import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.common.geo.country.Country;
 import com.otterdram.otterdram.common.geo.subregion.Subregion;
 import io.hypersistence.utils.hibernate.type.json.JsonType;

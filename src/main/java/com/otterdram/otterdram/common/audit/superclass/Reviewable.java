@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.audit.superclass;
 
-import com.otterdram.otterdram.common.enums.DataStatus;
+import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import jakarta.persistence.*;
 
 import java.time.Instant;
