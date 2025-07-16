@@ -1,8 +1,8 @@
 package com.otterdram.otterdram.domain.spirits.company;
 
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
-import com.otterdram.otterdram.common.enums.DataStatus;
-import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.common.enums.common.DataStatus;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.brand.Brand;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import io.hypersistence.utils.hibernate.type.json.JsonType;

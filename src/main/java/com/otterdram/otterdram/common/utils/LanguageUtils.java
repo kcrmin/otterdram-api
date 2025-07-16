@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.common.utils;
 
-import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
 
 import java.util.Map;
 

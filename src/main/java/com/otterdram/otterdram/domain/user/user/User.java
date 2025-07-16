@@ -1,8 +1,8 @@
 package com.otterdram.otterdram.domain.user.user;
 
 import com.otterdram.otterdram.common.audit.superclass.timestamp.SoftDeletableTimestamp;
-import com.otterdram.otterdram.common.enums.Privacy;
-import com.otterdram.otterdram.common.enums.UserStatus;
+import com.otterdram.otterdram.common.enums.common.Privacy;
+import com.otterdram.otterdram.common.enums.user.UserStatus;
 import com.otterdram.otterdram.domain.user.block.UserBlock;
 import com.otterdram.otterdram.domain.user.follow.UserFollow;
 import com.otterdram.otterdram.domain.user.role.UserRole;

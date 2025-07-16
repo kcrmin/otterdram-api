@@ -1,8 +1,8 @@
 package com.otterdram.otterdram.domain.spirits.tag;
 
 import com.otterdram.otterdram.common.audit.superclass.Creatable;
-import com.otterdram.otterdram.common.enums.LanguageCode;
-import com.otterdram.otterdram.common.enums.TagEntityType;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
+import com.otterdram.otterdram.common.enums.target.TagTargetEntity;
 import jakarta.persistence.*;
 
 /**
@@ -31,7 +31,7 @@ public class EntityTag extends Creatable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "entity_type", nullable = false, columnDefinition = "varchar(50)")
-    private TagEntityType entityType;
+    private TagTargetEntity entityType;
 
     @Column(name = "entity_id", nullable = false)
     private Long entityId;

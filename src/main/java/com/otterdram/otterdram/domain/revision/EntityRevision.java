@@ -1,8 +1,8 @@
 package com.otterdram.otterdram.domain.revision;
 
 import com.otterdram.otterdram.common.audit.superclass.Reviewable;
-import com.otterdram.otterdram.common.enums.RevisionEntityType;
-import com.otterdram.otterdram.common.enums.RevisionStatus;
+import com.otterdram.otterdram.common.enums.target.RevisionTargetEntity;
+import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
@@ -43,7 +43,7 @@ public class EntityRevision extends Reviewable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "entity_type", nullable = false, columnDefinition = "varchar(50)")
-    private RevisionEntityType entityType;
+    private RevisionTargetEntity entityType;
 
     @Column(name = "entity_id", nullable = false)
     private Long entityId;
