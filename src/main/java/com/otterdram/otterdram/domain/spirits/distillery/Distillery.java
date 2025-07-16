@@ -1,20 +1,16 @@
 package com.otterdram.otterdram.domain.spirits.distillery;
 
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
-<<<<<<< Updated upstream:src/main/java/com/otterdram/otterdram/domain/spirits/distillery/Distillery.java
-import com.otterdram.otterdram.common.enums.DataStatus;
-import com.otterdram.otterdram.common.enums.DistilleryOperationalStatus;
-import com.otterdram.otterdram.common.enums.LanguageCode;
+import com.otterdram.otterdram.common.enums.spirits.DistilleryOperationalStatus;
 import com.otterdram.otterdram.common.geo.address.Address;
-=======
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
-import com.otterdram.otterdram.domain.spirits.collection.Collection;
->>>>>>> Stashed changes:src/main/java/com/otterdram/otterdram/domain/spirits/brand/Brand.java
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.relation.BrandDistilleryRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -48,6 +44,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "distilleries")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Distillery extends SoftDeletable {
 
     @Id

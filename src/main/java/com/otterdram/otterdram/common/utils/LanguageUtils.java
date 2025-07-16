@@ -5,10 +5,10 @@ import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import java.util.Map;
 
 public class LanguageUtils {
-    public static String getDisplayName(String name, Map<LanguageCode, String> translations, LanguageCode lang) {
-        if (lang == LanguageCode.EN || translations == null) {
-            return name;
+    public static String getDisplayName(Map<LanguageCode, String> translations, LanguageCode targetLang, String defaultValue) {
+        if (targetLang == LanguageCode.EN || translations == null) {
+            return defaultValue;
         }
-        return translations.getOrDefault(lang, name);
+        return translations.getOrDefault(targetLang, defaultValue);
     }
 }

@@ -16,6 +16,7 @@ import java.time.Instant;
  * deletedAt
  * </pre>
  */
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class SoftDeletableTimestamp {

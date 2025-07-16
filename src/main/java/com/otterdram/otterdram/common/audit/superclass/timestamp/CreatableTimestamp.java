@@ -13,6 +13,7 @@ import java.time.Instant;
  * createdAt
  * </pre>
  */
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class CreatableTimestamp {

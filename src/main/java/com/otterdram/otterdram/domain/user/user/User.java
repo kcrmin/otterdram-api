@@ -10,6 +10,8 @@ import com.otterdram.otterdram.domain.user.profile.UserProfile;
 import com.otterdram.otterdram.domain.user.setting.UserSetting;
 import com.otterdram.otterdram.domain.user.social.UserSocialAccount;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends SoftDeletableTimestamp {
 
     @Id

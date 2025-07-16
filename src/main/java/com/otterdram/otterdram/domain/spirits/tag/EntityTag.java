@@ -4,6 +4,8 @@ import com.otterdram.otterdram.common.audit.superclass.Creatable;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.common.enums.target.TagTargetEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * Tag Entity
@@ -22,6 +24,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "entity_tags")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EntityTag extends Creatable {
 
     @Id

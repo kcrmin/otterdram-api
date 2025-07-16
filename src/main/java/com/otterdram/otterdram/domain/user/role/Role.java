@@ -2,6 +2,8 @@ package com.otterdram.otterdram.domain.user.role;
 
 import com.otterdram.otterdram.common.audit.superclass.Updatable;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = {"role_name"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role extends Updatable {
 
     @Id

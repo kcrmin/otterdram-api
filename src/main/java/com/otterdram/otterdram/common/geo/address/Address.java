@@ -3,8 +3,11 @@ package com.otterdram.otterdram.common.geo.address;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.common.geo.country.Country;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
 
     // Country
@@ -20,10 +23,6 @@ public class Address {
     // Address
     @Column(name = "address", length = 255)
     private String address;
-
-    protected Address() {
-        // Default constructor for JPA
-    }
 
     public Address(Country country, City city, String address) {
         this.country = country;

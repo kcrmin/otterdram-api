@@ -7,6 +7,8 @@ import com.otterdram.otterdram.domain.spirits.brand.Brand;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "companies")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Company extends SoftDeletable {
 
     @Id

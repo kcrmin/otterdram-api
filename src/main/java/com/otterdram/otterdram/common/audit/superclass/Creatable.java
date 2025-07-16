@@ -12,6 +12,7 @@ import java.time.Instant;
  * createdAt + createdBy
  * </pre>
  */
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Creatable {

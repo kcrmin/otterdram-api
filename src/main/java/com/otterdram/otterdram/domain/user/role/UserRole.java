@@ -3,6 +3,8 @@ package com.otterdram.otterdram.domain.user.role;
 import com.otterdram.otterdram.common.audit.superclass.Creatable;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** UserRole Entity
  * <pre>
@@ -18,6 +20,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_roles", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRole extends Creatable {
 
     @Id

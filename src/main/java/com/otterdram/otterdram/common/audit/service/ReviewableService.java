@@ -21,6 +21,13 @@ public abstract class ReviewableService<T extends Reviewable, ID> {
 
     protected abstract Long getCurrentUserId();
 
+    @Transactional(readOnly = true)
+    public final boolean isReviewed(ID id) {
+        return getRepository().findById(id)
+                .map(Reviewable::isReviewed)
+                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
+    }
+
     @Transactional
     public final void review(ID id, RevisionStatus status) {
         T entity = getRepository().findById(id)

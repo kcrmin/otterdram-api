@@ -14,6 +14,7 @@ import java.time.Instant;
  * updatedAt
  * </pre>
  */
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class UpdatableTimestamp extends CreatableTimestamp {

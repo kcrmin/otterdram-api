@@ -4,6 +4,8 @@ import com.otterdram.otterdram.common.audit.superclass.timestamp.UpdatableTimest
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** UserSetting Entity
  * <pre>
@@ -20,6 +22,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_settings", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserSetting extends UpdatableTimestamp {
 
     @Id

@@ -4,6 +4,8 @@ import com.otterdram.otterdram.common.audit.superclass.Creatable;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import com.otterdram.otterdram.domain.spirits.release.Release;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Join Table for the many-to-many relationship between releases and distilleries
  * <pre>
@@ -18,6 +20,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "release_distillery_relations")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReleaseDistilleryRelation extends Creatable {
 
     @Id

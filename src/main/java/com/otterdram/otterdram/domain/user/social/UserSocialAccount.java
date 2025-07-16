@@ -3,6 +3,8 @@ package com.otterdram.otterdram.domain.user.social;
 import com.otterdram.otterdram.common.audit.superclass.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** UserSocialAccount Entity
  * <pre>
@@ -20,6 +22,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "user_social_accounts", uniqueConstraints = @UniqueConstraint(columnNames = {"provider", "provider_id"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserSocialAccount extends CreatableTimestamp {
 
     @Id

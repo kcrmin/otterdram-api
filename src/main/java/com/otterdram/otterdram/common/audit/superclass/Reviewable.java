@@ -11,6 +11,7 @@ import java.time.Instant;
  * reviewedAt + reviewedBy
  * </pre>
  */
+
 @MappedSuperclass
 public abstract class Reviewable extends Creatable {
 
@@ -28,12 +29,12 @@ public abstract class Reviewable extends Creatable {
         return this.reviewedAt != null && this.reviewedBy != null;
     }
 
-    public boolean isPending() {
+    public boolean isPendingReview() {
         return this.status == RevisionStatus.IN_REVIEW;
     }
 
     public void review(Long userId, RevisionStatus status) {
-        if (!isReviewed() && isPending()) {
+        if (!isReviewed() && isPendingReview()) {
             this.reviewedAt = Instant.now();
             this.reviewedBy = userId;
             this.status = status;

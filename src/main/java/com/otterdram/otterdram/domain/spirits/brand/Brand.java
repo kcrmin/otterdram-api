@@ -5,14 +5,16 @@ import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.collection.Collection;
 import com.otterdram.otterdram.common.geo.address.Address;
-import com.otterdram.otterdram.common.enums.common.DataStatus;
-import com.otterdram.otterdram.common.enums.common.LanguageCode;
-import com.otterdram.otterdram.domain.spirits.collection.Collection;
+
+
+
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import com.otterdram.otterdram.domain.spirits.relation.BrandDistilleryRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -38,8 +40,10 @@ import java.util.Map;
  * }
  * </pre>
  */
+
 @Entity
 @Table(name = "brands")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Brand extends SoftDeletable {
 
     @Id

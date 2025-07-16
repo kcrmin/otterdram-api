@@ -2,9 +2,11 @@ package com.otterdram.otterdram.domain.user.profile;
 
 import com.otterdram.otterdram.common.audit.superclass.timestamp.UpdatableTimestamp;
 import com.otterdram.otterdram.common.enums.user.Gender;
-import com.otterdram.otterdram.common.geo.city.City;
+import com.otterdram.otterdram.common.geo.address.Address;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -28,6 +30,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user_profiles")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserProfile extends UpdatableTimestamp {
 
     @Id

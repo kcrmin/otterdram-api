@@ -1,10 +1,13 @@
 package com.otterdram.otterdram.common.geo.country;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.ZoneId;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimeZoneInfo {
 
     private ZoneId zoneName;

@@ -13,6 +13,7 @@ import java.time.Instant;
  * updatedAt + updatedBy
  * </pre>
  */
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Updatable extends Creatable {

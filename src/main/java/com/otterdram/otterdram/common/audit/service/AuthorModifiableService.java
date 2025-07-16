@@ -20,6 +20,13 @@ public abstract class AuthorModifiableService<T extends AuthorModifiable, ID> ex
 
     protected abstract Long getCurrentUserId();
 
+    @Transactional(readOnly = true)
+    public final boolean isModified(ID id) {
+        return getRepository().findById(id)
+                .map(AuthorModifiable::isModified)
+                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
+    }
+
     @Transactional
     public final void modify(ID id) {
         T entity = getRepository().findById(id)

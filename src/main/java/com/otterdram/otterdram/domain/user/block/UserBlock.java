@@ -3,6 +3,8 @@ package com.otterdram.otterdram.domain.user.block;
 import com.otterdram.otterdram.common.audit.superclass.timestamp.CreatableTimestamp;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 
 /** UserBlock Entity
@@ -16,6 +18,7 @@ import org.springframework.data.annotation.CreatedBy;
 
 @Entity
 @Table(name = "user_blocks")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserBlock extends CreatableTimestamp {
 
     @Id

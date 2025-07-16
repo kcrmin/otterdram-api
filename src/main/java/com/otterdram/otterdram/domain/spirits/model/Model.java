@@ -7,6 +7,8 @@ import com.otterdram.otterdram.domain.spirits.collection.Collection;
 import com.otterdram.otterdram.domain.spirits.release.Release;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "models")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Model extends SoftDeletable {
 
     @Id

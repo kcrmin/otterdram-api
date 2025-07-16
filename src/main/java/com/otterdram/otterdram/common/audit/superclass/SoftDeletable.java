@@ -12,6 +12,7 @@ import java.time.Instant;
  * deletedAt + deletedBy
  * </pre>
  */
+
 @MappedSuperclass
 public abstract class SoftDeletable extends Updatable {
 

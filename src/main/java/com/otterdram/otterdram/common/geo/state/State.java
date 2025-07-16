@@ -3,6 +3,8 @@ package com.otterdram.otterdram.common.geo.state;
 import com.otterdram.otterdram.common.geo.city.City;
 import com.otterdram.otterdram.common.geo.country.Country;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ import java.util.List;
 @Entity
 @Immutable
 @Table(name = "states", schema = "public")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class State {
 
     @Id

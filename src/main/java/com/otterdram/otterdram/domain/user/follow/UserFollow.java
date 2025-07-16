@@ -4,6 +4,8 @@ import com.otterdram.otterdram.common.audit.superclass.timestamp.CreatableTimest
 import com.otterdram.otterdram.common.enums.user.FollowStatus;
 import com.otterdram.otterdram.domain.user.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 
 /**
@@ -20,6 +22,7 @@ import org.springframework.data.annotation.CreatedBy;
  */
 @Entity
 @Table(name = "user_follows", uniqueConstraints = @UniqueConstraint(columnNames = {"follower_id", "followee_id"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFollow extends CreatableTimestamp {
 
     @Id

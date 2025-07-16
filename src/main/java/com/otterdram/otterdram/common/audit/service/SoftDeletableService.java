@@ -20,6 +20,13 @@ public abstract class SoftDeletableService<T extends SoftDeletable, ID> {
 
     protected abstract Long getCurrentUserId();
 
+    @Transactional(readOnly = true)
+    public final boolean isSoftDeleted(ID id) {
+        return getRepository().findById(id)
+                .map(SoftDeletable::isDeleted)
+                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
+    }
+
     @Transactional
     public final void softDelete(ID id) {
         T entity = getRepository().findById(id)

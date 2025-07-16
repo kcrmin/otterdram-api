@@ -1,6 +1,7 @@
 package com.otterdram.otterdram.common.audit.superclass;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 
 import java.time.Instant;
 
@@ -12,6 +13,8 @@ import java.time.Instant;
  * deletedAt + deletedBy
  * </pre>
  */
+
+@MappedSuperclass
 public abstract class AuthorModifiable extends SoftDeletable {
 
     @Column(name = "modified_at")

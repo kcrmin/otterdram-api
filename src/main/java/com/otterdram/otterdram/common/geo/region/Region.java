@@ -5,6 +5,8 @@ import com.otterdram.otterdram.common.geo.country.Country;
 import com.otterdram.otterdram.common.geo.subregion.Subregion;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Type;
 
@@ -29,6 +31,7 @@ import java.util.Map;
 @Entity
 @Immutable
 @Table(name = "regions", schema = "public")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Region {
 
     @Id
