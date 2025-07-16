@@ -22,7 +22,7 @@ public abstract class ReviewableService<T extends Reviewable, ID> {
     protected abstract Long getCurrentUserId();
 
     @Transactional
-    public final void review(ID id, DataStatus status) {
+    public final void review(ID id, RevisionStatus status) {
         T entity = getRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
 
