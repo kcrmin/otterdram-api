@@ -35,5 +35,4 @@ public class UserRole extends Creatable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-
 }

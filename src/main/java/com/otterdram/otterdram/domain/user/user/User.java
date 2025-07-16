@@ -34,6 +34,7 @@ import java.util.List;
  * }
  * </pre>
  */
+
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -97,5 +98,4 @@ public class User extends SoftDeletableTimestamp {
 
     @OneToMany(mappedBy = "blocked", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<UserBlock> userBlockedBy = new ArrayList<>();
-
 }

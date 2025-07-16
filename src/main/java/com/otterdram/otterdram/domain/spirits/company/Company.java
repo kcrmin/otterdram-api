@@ -22,8 +22,8 @@ import java.util.Map;
  *   parent_company_id bigint [ref: > companies.id]
  *   company_logo varchar(255)
  *   company_name varchar(100) [not null, unique]
- *   translations text [note: "다국어 지원 이름"]
- *   descriptions text [note: "다국어 지원"]
+ *   translations jsonb [note: "다국어 지원 이름"]
+ *   descriptions jsonb [note: "다국어 지원"]
  *   independent_bottler boolean [not null, default: false]
  *   status DataStatus [not null, default: 'DRAFT']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -57,11 +57,11 @@ public class Company extends SoftDeletable {
     private String companyName;
 
     @Type(JsonType.class)
-    @Column(name = "translations", columnDefinition = "json")
+    @Column(name = "translations", columnDefinition = "jsonb")
     private Map<LanguageCode, String> translations;
 
     @Type(JsonType.class)
-    @Column(name = "descriptions", columnDefinition = "json")
+    @Column(name = "descriptions", columnDefinition = "jsonb")
     private Map<LanguageCode, String> descriptions;
 
     @Column(name = "independent_bottler", nullable = false, columnDefinition = "boolean default false")

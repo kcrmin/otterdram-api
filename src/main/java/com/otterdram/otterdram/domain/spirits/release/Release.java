@@ -8,6 +8,8 @@ import com.otterdram.otterdram.common.enums.spirits.BottlingFormatType;
 import com.otterdram.otterdram.common.enums.spirits.BottlingStrengthType;
 import com.otterdram.otterdram.common.enums.spirits.PeatLevel;
 import com.otterdram.otterdram.domain.spirits.model.Model;
+import com.otterdram.otterdram.domain.spirits.relation.DistilleryReleaseRelation;
+import com.otterdram.otterdram.domain.spirits.relation.ReleaseCaskRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,6 +17,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** Release Entity
@@ -24,8 +28,8 @@ import java.util.Map;
  *   model_id bigint [ref: > models.id, not null]
  *   release_image varchar(255)
  *   release_name varchar(100) [not null]
- *   translations text [note: "다국어 지원 이름"]
- *   descriptions text [note: "다국어 지원"]
+ *   translations jsonb [note: "다국어 지원 이름"]
+ *   descriptions jsonb [note: "다국어 지원"]
  *   age_statement_type AgeStatementType [not null, default: 'UNKNOWN']
  *   stated_age smallint [note: "age_type이 'STATED'일 때만 값이 있음"]
  *   distilled_on date
@@ -70,11 +74,11 @@ public class Release extends SoftDeletable {
     private String releaseName;
 
     @Type(JsonType.class)
-    @Column(name = "translations", columnDefinition = "json")
+    @Column(name = "translations", columnDefinition = "jsonb")
     private Map<LanguageCode, String> translations;
 
     @Type(JsonType.class)
-    @Column(name = "descriptions", columnDefinition = "json")
+    @Column(name = "descriptions", columnDefinition = "jsonb")
     private Map<LanguageCode, String> descriptions;
 
     // =========================== Age and Bottling Information ===========================
@@ -93,7 +97,7 @@ public class Release extends SoftDeletable {
 
     // =========================== Bottling Strength Information ===========================
     @Enumerated(EnumType.STRING)
-    @Column(name = "bottling_str\tUI 라벨에서 \"Cask Strength\" / \"Barrel Strength\"로 분기 가능ength_type", nullable = false, columnDefinition = "varchar(20) default 'STANDARD'")
+    @Column(name = "bottling_strength_type", nullable = false, columnDefinition = "varchar(20) default 'STANDARD'")
     private BottlingStrengthType bottlingStrengthType = BottlingStrengthType.STANDARD;
 
     @Column(name = "abv", nullable = false, precision = 5, scale = 2)
@@ -107,7 +111,6 @@ public class Release extends SoftDeletable {
     private String releasedBottles; // Total released bottles (e.g., '2000', '≈500')
 
     // =========================== Cask and Filtering Information ===========================
-    // TODO: Convert to BottlingFormatType enum
     @Enumerated(EnumType.STRING)
     @Column(name = "bottling_format_type", nullable = false, columnDefinition = "varchar(20) default 'UNKNOWN'")
     private BottlingFormatType bottlingFormatType = BottlingFormatType.UNKNOWN;
@@ -128,4 +131,10 @@ public class Release extends SoftDeletable {
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
     private DataStatus status = DataStatus.DRAFT;
 
+    // =========================== Relationships ===========================
+    @OneToMany(mappedBy = "model", fetch = FetchType.LAZY)
+    private List<DistilleryReleaseRelation> distilleryReleaseRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "release", fetch = FetchType.LAZY)
+    private List<ReleaseCaskRelation> releaseCaskRelations = new ArrayList<>();
 }

@@ -110,11 +110,11 @@ public class Country {
     private String Nationality;
 
     @Type(JsonType.class)
-    @Column(name = "timezones", columnDefinition = "text")
+    @Column(name = "timezones", columnDefinition = "jsonb")
     private List<TimeZoneInfo> timezones;
 
     @Type(JsonType.class)
-    @Column(name = "translations", columnDefinition = "text")
+    @Column(name = "translations", columnDefinition = "jsonb")
     private Map<LanguageCode, String> translations;
 
     @Column(name = "latitude", precision = 10, scale = 8)

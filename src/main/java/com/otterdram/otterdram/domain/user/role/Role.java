@@ -36,5 +36,4 @@ public class Role extends Updatable {
     // UserRole relationship
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserRole> userRoles = new ArrayList<>();
-
 }

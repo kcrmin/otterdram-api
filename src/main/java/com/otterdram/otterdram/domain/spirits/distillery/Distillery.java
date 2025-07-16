@@ -6,7 +6,8 @@ import com.otterdram.otterdram.common.geo.address.Address;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.company.Company;
-import com.otterdram.otterdram.domain.spirits.relation.BrandDistilleryRelation;
+import com.otterdram.otterdram.domain.spirits.relation.DistilleryBrandRelation;
+import com.otterdram.otterdram.domain.spirits.relation.DistilleryReleaseRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,11 +26,11 @@ import java.util.Map;
  *   company_id bigint [ref: > companies.id]
  *   distillery_logo varchar(255)
  *   distillery_name varchar(100) [not null, unique]
- *   translations text [note: "다국어 지원 이름"]
+ *   translations jsonb [note: "다국어 지원 이름"]
+ *   descriptions jsonb [note: "다국어 지원"]
  *   country_id bigint [ref: > countries.id]
  *   city_id bigint [ref: > cities.id]
  *   address varchar(255)
- *   descriptions text [note: "다국어 지원"]
  *   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
  *   status DataStatus [not null, default: 'DRAFT']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -63,15 +64,15 @@ public class Distillery extends SoftDeletable {
     private String distilleryName;
 
     @Type(JsonType.class)
-    @Column(name = "translations", columnDefinition = "json")
+    @Column(name = "translations", columnDefinition = "jsonb")
     private Map<LanguageCode, String> translations;
+
+    @Type(JsonType.class)
+    @Column(name = "descriptions", columnDefinition = "jsonb")
+    private Map<LanguageCode, String> descriptions;
 
     @Embedded
     private Address address;
-
-    @Type(JsonType.class)
-    @Column(name = "descriptions", columnDefinition = "json")
-    private Map<LanguageCode, String> descriptions;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "operational_status", nullable = false, columnDefinition = "varchar(20) default 'UNKNOWN'")
@@ -83,5 +84,8 @@ public class Distillery extends SoftDeletable {
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "distillery", fetch = FetchType.LAZY)
-    private List<BrandDistilleryRelation> brandDistilleryRelations = new ArrayList<>();
+    private List<DistilleryBrandRelation> distilleryBrandRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "distillery", fetch = FetchType.LAZY)
+    private List<DistilleryReleaseRelation> distilleryReleaseRelations = new ArrayList<>();
 }

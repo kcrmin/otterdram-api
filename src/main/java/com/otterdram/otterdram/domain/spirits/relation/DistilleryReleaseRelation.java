@@ -18,22 +18,22 @@ import lombok.NoArgsConstructor;
  * }
  * </pre>
  */
+
 @Entity
-@Table(name = "release_distillery_relations")
+@Table(name = "distillery_release_relations",  uniqueConstraints = @UniqueConstraint(columnNames = {"distillery_id", "release_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReleaseDistilleryRelation extends Creatable {
+public class DistilleryReleaseRelation extends Creatable {
 
     @Id
-    @SequenceGenerator(name = "release_distillery_relation_seq", sequenceName = "release_distillery_relation_sequence")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "release_distillery_relation_seq")
+    @SequenceGenerator(name = "distillery_release_relation_seq", sequenceName = "distillery_release_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "distillery_release_relation_seq")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "release_id", nullable = false)
-    private Release release;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "distillery_id", nullable = false)
     private Distillery distillery;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "release_id", nullable = false)
+    private Release release;
 }

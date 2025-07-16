@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
  * }
  * </pre>
  */
+
 @Entity
 @Table(name = "user_social_accounts", uniqueConstraints = @UniqueConstraint(columnNames = {"provider", "provider_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,5 +40,4 @@ public class UserSocialAccount extends CreatableTimestamp {
 
     @Column(name = "provider_id", nullable = false, length = 255)
     private String providerId;
-
 }

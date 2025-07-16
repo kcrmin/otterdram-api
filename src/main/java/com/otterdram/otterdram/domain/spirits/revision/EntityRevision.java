@@ -1,4 +1,4 @@
-package com.otterdram.otterdram.domain.revision;
+package com.otterdram.otterdram.domain.spirits.revision;
 
 import com.otterdram.otterdram.common.audit.superclass.Reviewable;
 import com.otterdram.otterdram.common.enums.target.RevisionTargetEntity;

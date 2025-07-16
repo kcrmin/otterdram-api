@@ -39,8 +39,9 @@ public class EntityTag extends Creatable {
     @Column(name = "entity_id", nullable = false)
     private Long entityId;
 
-    @Column(name = "language_code", nullable = false, length = 10)
-    private LanguageCode languageCode;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language_code", nullable = false, length = 10, columnDefinition = "varchar(10) default 'EN'")
+    private LanguageCode languageCode = LanguageCode.EN;
 
     @Column(name = "tag", nullable = false, length = 50)
     private String tag;

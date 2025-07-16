@@ -57,5 +57,4 @@ public class UserProfile extends UpdatableTimestamp {
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false, columnDefinition = "varchar(20) default 'UNSPECIFIED'")
     private Gender gender = Gender.UNSPECIFIED;
-
 }

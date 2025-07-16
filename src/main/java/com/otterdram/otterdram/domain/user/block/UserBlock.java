@@ -34,5 +34,4 @@ public class UserBlock extends CreatableTimestamp {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_id", nullable = false)
     private User blocked;
-
 }

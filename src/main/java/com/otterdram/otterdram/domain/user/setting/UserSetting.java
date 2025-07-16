@@ -40,5 +40,4 @@ public class UserSetting extends UpdatableTimestamp {
     @Enumerated(EnumType.STRING)
     @Column(name = "lang_preference", nullable = false, columnDefinition = "varchar(10) default 'EN'")
     private LanguageCode langPreference = LanguageCode.EN;
-
 }

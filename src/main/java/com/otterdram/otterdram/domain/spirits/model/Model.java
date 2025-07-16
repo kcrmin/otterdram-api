@@ -3,6 +3,7 @@ package com.otterdram.otterdram.domain.spirits.model;
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
+import com.otterdram.otterdram.domain.spirits.category.Category;
 import com.otterdram.otterdram.domain.spirits.collection.Collection;
 import com.otterdram.otterdram.domain.spirits.release.Release;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -24,8 +25,8 @@ import java.util.Map;
  *   category_id bigint [ref: > categories.id, note: "예: 버번, 블랜디드 등"]
  *   model_image varchar(255)
  *   model_name varchar(100) [not null]
- *   translations text [note: "다국어 지원 이름"]
- *   descriptions text [note: "다국어 지원"]
+ *   translations jsonb [note: "다국어 지원 이름"]
+ *   descriptions jsonb [note: "다국어 지원"]
  *   status DataStatus [not null, default: 'DRAFT']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
@@ -51,7 +52,9 @@ public class Model extends SoftDeletable {
     @JoinColumn(name = "collection_id", nullable = false)
     private Collection collection;
 
-    // TODO: Category
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(name = "model_image", length = 255)
     private String modelImage;
@@ -60,11 +63,11 @@ public class Model extends SoftDeletable {
     private String modelName;
 
     @Type(JsonType.class)
-    @Column(name = "translations", columnDefinition = "json")
+    @Column(name = "translations", columnDefinition = "jsonb")
     private Map<LanguageCode, String> translations;
 
     @Type(JsonType.class)
-    @Column(name = "descriptions", columnDefinition = "json")
+    @Column(name = "descriptions", columnDefinition = "jsonb")
     private Map<LanguageCode, String> descriptions;
 
     @Enumerated(EnumType.STRING)
@@ -74,5 +77,4 @@ public class Model extends SoftDeletable {
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY)
     private List<Release> releases = new ArrayList<>();
-
 }

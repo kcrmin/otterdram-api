@@ -1,13 +1,8 @@
-package com.otterdram.otterdram.domain.spirits.brand;
+package com.otterdram.otterdram.domain.spirits.cask;
 
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
-import com.otterdram.otterdram.domain.spirits.collection.Collection;
-
-
-import com.otterdram.otterdram.domain.spirits.company.Company;
-import com.otterdram.otterdram.domain.spirits.relation.DistilleryBrandRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,15 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Brand Entity
+/** Cask Type Entity
  * <pre>
- * Table brands {
+ * Table cask_types {
  *   id bigint [pk, increment]
- *   company_id bigint [ref: > companies.id]
- *   brand_logo varchar(255)
- *   brand_name varchar(100) [not null, unique]
- *   translations jsonb [note: "다국어 지원 이름"]
+ *   name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
+ *   translations jsonb [note: "다국어 지원"]
  *   descriptions jsonb [note: "다국어 지원"]
+ *   size_litre int [note: "예: 200L, 500L 등"]
  *   status DataStatus [not null, default: 'DRAFT']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
@@ -37,26 +31,18 @@ import java.util.Map;
  * }
  * </pre>
  */
-
 @Entity
-@Table(name = "brands")
+@Table(name = "cask_types")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Brand extends SoftDeletable {
+public class CaskType extends SoftDeletable {
 
     @Id
-    @SequenceGenerator(name = "brand_seq", sequenceName = "brand_sequence")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_seq")
+    @SequenceGenerator(name = "cask_type_seq", sequenceName = "cask_type_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cask_type_seq")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @Column(name = "brand_logo", length = 255)
-    private String brandLogo;
-
-    @Column(name = "brand_name", nullable = false, length = 100, unique = true)
-    private String brandName;
+    @Column(name = "name", nullable = false, unique = true, length = 50)
+    private String name;
 
     @Type(JsonType.class)
     @Column(name = "translations", columnDefinition = "jsonb")
@@ -66,14 +52,14 @@ public class Brand extends SoftDeletable {
     @Column(name = "descriptions", columnDefinition = "jsonb")
     private Map<LanguageCode, String> descriptions;
 
+    @Column(name = "size_litre", nullable = false)
+    private Integer sizeLitre;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
     private DataStatus status = DataStatus.DRAFT;
 
     // =========================== Relationships ===========================
-    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
-    private List<DistilleryBrandRelation> distilleryBrandRelations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
-    private List<Collection> collections = new ArrayList<>();
+    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cask> casks = new ArrayList<>();
 }
