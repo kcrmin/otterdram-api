@@ -55,7 +55,7 @@ public class EntityComment extends AuthorModifiable {
     private Short depth = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "language_code", nullable = false, length = 10, columnDefinition = "varchar(10) default 'EN'")
+    @Column(name = "language_code", nullable = false, columnDefinition = "varchar(10) default 'EN'")
     private LanguageCode languageCode = LanguageCode.EN;
 
     @Column(name = "comment", nullable = false, columnDefinition = "text")

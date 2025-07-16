@@ -10,6 +10,9 @@ import com.otterdram.otterdram.common.enums.spirits.PeatLevel;
 import com.otterdram.otterdram.domain.spirits.model.Model;
 import com.otterdram.otterdram.domain.spirits.relation.DistilleryReleaseRelation;
 import com.otterdram.otterdram.domain.spirits.relation.ReleaseCaskRelation;
+import com.otterdram.otterdram.domain.ugc.bottle.Bottle;
+import com.otterdram.otterdram.domain.ugc.review.Review;
+import com.otterdram.otterdram.domain.ugc.vial.Vial;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -137,4 +140,13 @@ public class Release extends SoftDeletable {
 
     @OneToMany(mappedBy = "release", fetch = FetchType.LAZY)
     private List<ReleaseCaskRelation> releaseCaskRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Bottle> bottles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Vial> vials = new ArrayList<>();
+
+    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 }
