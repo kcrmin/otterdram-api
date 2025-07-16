@@ -91,6 +91,7 @@ public class Release extends SoftDeletable {
     // =========================== Bottling Strength Information ===========================
     @Enumerated(EnumType.STRING)
     @Column(name = "bottling_str\tUI 라벨에서 \"Cask Strength\" / \"Barrel Strength\"로 분기 가능ength_type", nullable = false, columnDefinition = "varchar(20) default 'STANDARD'")
+    private BottlingStrengthType bottlingStrengthType = BottlingStrengthType.STANDARD;
 
     @Column(name = "abv", nullable = false, precision = 5, scale = 2)
     private Double abv;

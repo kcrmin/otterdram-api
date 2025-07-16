@@ -1,10 +1,16 @@
 package com.otterdram.otterdram.domain.spirits.distillery;
 
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
+<<<<<<< Updated upstream:src/main/java/com/otterdram/otterdram/domain/spirits/distillery/Distillery.java
 import com.otterdram.otterdram.common.enums.DataStatus;
 import com.otterdram.otterdram.common.enums.DistilleryOperationalStatus;
 import com.otterdram.otterdram.common.enums.LanguageCode;
 import com.otterdram.otterdram.common.geo.address.Address;
+=======
+import com.otterdram.otterdram.common.enums.common.DataStatus;
+import com.otterdram.otterdram.common.enums.common.LanguageCode;
+import com.otterdram.otterdram.domain.spirits.collection.Collection;
+>>>>>>> Stashed changes:src/main/java/com/otterdram/otterdram/domain/spirits/brand/Brand.java
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.relation.BrandDistilleryRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
