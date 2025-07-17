@@ -40,7 +40,7 @@ public class EntityTag extends Creatable {
     private Long entityId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "language_code", nullable = false, length = 10, columnDefinition = "varchar(10) default 'EN'")
+    @Column(name = "language_code", nullable = false, columnDefinition = "varchar(10) default 'EN'")
     private LanguageCode languageCode = LanguageCode.EN;
 
     @Column(name = "tag", nullable = false, length = 50)

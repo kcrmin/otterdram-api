@@ -3,6 +3,8 @@ package com.otterdram.otterdram.domain.user.user;
 import com.otterdram.otterdram.common.audit.superclass.timestamp.SoftDeletableTimestamp;
 import com.otterdram.otterdram.common.enums.common.Privacy;
 import com.otterdram.otterdram.common.enums.user.UserStatus;
+import com.otterdram.otterdram.domain.ugc.review.Review;
+import com.otterdram.otterdram.domain.ugc.shelf.Shelf;
 import com.otterdram.otterdram.domain.user.block.UserBlock;
 import com.otterdram.otterdram.domain.user.follow.UserFollow;
 import com.otterdram.otterdram.domain.user.role.UserRole;
@@ -98,4 +100,12 @@ public class User extends SoftDeletableTimestamp {
 
     @OneToMany(mappedBy = "blocked", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<UserBlock> userBlockedBy = new ArrayList<>();
+
+    // Shelf
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Shelf> shelves = new ArrayList<>();
+
+    // Review
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 }

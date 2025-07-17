@@ -1,6 +1,6 @@
 package com.otterdram.otterdram.domain.ugc.comment;
 
-import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
+import com.otterdram.otterdram.common.audit.superclass.AuthorModifiable;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.common.enums.target.CommentTargetEntity;
 import jakarta.persistence.*;
@@ -34,7 +34,7 @@ import java.util.List;
 @Entity
 @Table(name = "entity_comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EntityComment extends SoftDeletable {
+public class EntityComment extends AuthorModifiable {
 
     @Id
     @SequenceGenerator(name = "entity_comment_seq", sequenceName = "entity_comment_sequence")
@@ -55,7 +55,7 @@ public class EntityComment extends SoftDeletable {
     private Short depth = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "language_code", nullable = false, length = 10, columnDefinition = "varchar(10) default 'EN'")
+    @Column(name = "language_code", nullable = false, columnDefinition = "varchar(10) default 'EN'")
     private LanguageCode languageCode = LanguageCode.EN;
 
     @Column(name = "comment", nullable = false, columnDefinition = "text")
