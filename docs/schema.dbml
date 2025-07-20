@@ -306,6 +306,7 @@ Table shelves {
   shelf_name varchar(100) [not null]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted_at timestamp
 }
 Table shelf_share_tokens {
   id bigint [pk, increment]
@@ -336,6 +337,8 @@ Table bottles {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table bottle_transfers {
   id bigint [pk, increment]
@@ -363,7 +366,7 @@ Table vials {
   id bigint [pk, increment]
   shelf_id bigint [ref: > shelves.id, not null]
   release_id bigint [ref: > releases.id, not null]
-  vial_name varchar(75) [not null]
+  vial_name varchar(100) [not null]
   is_blind boolean [not null, default: false]
   note varchar(255)
   vial_size smallint
@@ -375,6 +378,8 @@ Table vials {
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 Table vial_transfers {
   id bigint [pk, increment]
@@ -407,8 +412,8 @@ Table reviews {
   blind_tasting boolean [not null, default: false]
   serving_style ServingStyle [not null]
   serving_size smallint [not null]
-  serving_size_unit VolumeUnit [default: 'ML', not null]
-  breathed_for interval [note: "첫 개봉 후 지난 시간 (last_opened_at - first_opened_at)"]
+  serving_size_unit VolumeUnit [not null, default: 'UNKNOWN']
+  breathed_for varchar [note: "첫 개봉 후 지난 시간 (last_opened_at - first_opened_at)"]
   tier Tier [not null]
   score decimal(4, 1)
   alcohol_presence AlcoholPresence [not null]
@@ -422,8 +427,11 @@ Table reviews {
   finish_description text [note: "피니시"]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
+  modified_at timestamp
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   updated_by bigint [ref: > users.id, not null]
+  deleted_at timestamp
+  deleted_by bigint [ref: > users.id]
 }
 
 // -- 댓글 & 투표 --
@@ -432,8 +440,8 @@ Table entity_comments {
   entity_type CommentTargetType [not null]
   entity_id bigint [not null]
   parent_id bigint [ref: > entity_comments.id]
-  language_code LanguageCode [not null]
-  depth smallint [not null, note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
+  depth smallint [not null, default: '0', note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
+  language_code LanguageCode [not null, default: 'EN']
   comment text [not null]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -460,12 +468,12 @@ Table comment_votes {
 // -- 카테고리 --
 Table categories {
   id bigint [pk, increment]
-  name varchar(255) [not null, note: "카테고리명, 예: 'Single Malt', 'Bourbon', 'Blended'"]
-  translations text [note: "다국어 JSON"]
+  name varchar(100) [not null, note: "카테고리명, 예: 'Single Malt', 'Bourbon', 'Blended'"]
   parent_id bigint [ref: > categories.id, default: null]
-  path varchar(100) [not null, note: "materialized path, 예: '1/2/3'"]
   depth smallint [not null, note: "카테고리 깊이, 루트=0, 예: 1=1단계, 2=2단계"]
-  descriptions text [note: "다국어 JSON"]
+  path varchar(255) [not null, note: "materialized path, 예: '1/2/3'"]
+  translations jsonb [note: "다국어 JSON"]
+  descriptions jsonb [note: "다국어 JSON"]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -480,8 +488,8 @@ Table companies {
   parent_company_id bigint [ref: > companies.id]
   company_logo varchar(255)
   company_name varchar(100) [not null, unique]
-  translations text [note: "다국어 지원 이름"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   independent_bottler boolean [not null, default: false]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -496,11 +504,11 @@ Table distilleries {
   company_id bigint [ref: > companies.id]
   distillery_logo varchar(255)
   distillery_name varchar(100) [not null, unique]
-  translations text [note: "다국어 지원 이름"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   country_id bigint [ref: > countries.id]
   city_id bigint [ref: > cities.id]
   address varchar(255)
-  descriptions text [note: "다국어 지원"]
   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -510,10 +518,10 @@ Table distilleries {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table brand_distillery_relations {
+Table distillery_brand_relations {
   id bigint [pk, increment]
-  brand_id bigint [ref: > brands.id, not null]
   distillery_id bigint [ref: > distilleries.id, not null]
+  brand_id bigint [ref: > brands.id, not null]
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
 }
@@ -522,8 +530,8 @@ Table brands {
   company_id bigint [ref: > companies.id]
   brand_logo varchar(255)
   brand_name varchar(100) [not null, unique]
-  translations text [note: "다국어 지원 이름"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -536,8 +544,8 @@ Table collections {
   id bigint [pk, increment]
   brand_id bigint [ref: > brands.id, not null]
   collection_name varchar(100) [not null]
-  translations text [note: "다국어 지원 이름"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -552,8 +560,8 @@ Table models {
   category_id bigint [ref: > categories.id, note: "예: 버번, 블랜디드 등"]
   model_image varchar(255)
   model_name varchar(100) [not null]
-  translations text [note: "다국어 지원 이름"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -574,13 +582,13 @@ Table releases {
   model_id bigint [ref: > models.id, not null]
   release_image varchar(255)
   release_name varchar(100) [not null]
-  translations text [note: "다국어 지원 이름"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원 이름"]
+  descriptions jsonb [note: "다국어 지원"]
   age_statement_type AgeStatementType [not null, default: 'UNKNOWN']
   stated_age smallint [note: "age_type이 'STATED'일 때만 값이 있음"]
   distilled_on date
   bottled_on date
-  bottling_strength_type BottlingStrengthType [not null, default: 'UNKNOWN']
+  bottling_strength_type BottlingStrengthType [not null, default: 'STANDARD']
   abv decimal(5,2) [not null]
   limited_edition boolean [note: "한정판: NULL은 UNKNOWN"]
   released_bottles varchar(32) [note: "총 발매병수(예: '2000', '≈500' 등)"]
@@ -601,8 +609,8 @@ Table releases {
 Table cask_materials {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
-  translations text [note: "다국어 지원"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원"]
+  descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -614,9 +622,9 @@ Table cask_materials {
 Table cask_types {
   id bigint [pk, increment]
   name varchar(50) [not null, unique, note: "예: Barrel, Butt, Puncheon 등"]
-  translations text [note: "다국어 지원"]
-  size_litre INT [note: "예: 200L, 500L 등"]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원"]
+  descriptions jsonb [note: "다국어 지원"]
+  size_litre int [note: "예: 200L, 500L 등"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
   created_by bigint [ref: > users.id, not null]
@@ -628,12 +636,11 @@ Table cask_types {
 Table casks {
   id bigint [pk, increment]
   name varchar(100) [not null, unique, note: "예: PX Sherry Butt, Bourbon Barrel 등"]
-  translations text [note: "다국어 지원"]
-  fill_number FillNumber
   category_id bigint [ref: > categories.id, note: "예: 버번, 셰리와인 등"]
   material_id bigint [ref: > cask_materials.id]
   shape_id bigint [ref: > cask_types.id]
-  descriptions text [note: "다국어 지원"]
+  translations jsonb [note: "다국어 지원"]
+  descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
   created_at timestamp [not null]
   created_by bigint [ref: > users.id, not null]
@@ -642,9 +649,10 @@ Table casks {
   deleted_at timestamp
   deleted_by bigint [ref: > users.id]
 }
-Table release_casks {
+Table release_cask_relations {
   id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
+  fill_number FillNumber [not null, default: 'UNKNOWN']
   cask_id bigint [ref: > casks.id, not null]
   proportion decimal(5,2) [note: "비율(%)"]
   maturation_months smallint
