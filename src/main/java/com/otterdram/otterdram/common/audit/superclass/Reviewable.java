@@ -19,7 +19,7 @@ public abstract class Reviewable extends Creatable {
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
     private RevisionStatus status = RevisionStatus.IN_REVIEW;
 
-    @Column(name = "reviewed_at")
+    @Column(name = "reviewed_at", columnDefinition = "timestamptz(6)")
     private Instant reviewedAt;
 
     @Column(name = "reviewed_by")

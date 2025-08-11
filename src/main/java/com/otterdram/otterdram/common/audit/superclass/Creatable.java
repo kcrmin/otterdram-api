@@ -18,7 +18,7 @@ import java.time.Instant;
 public abstract class Creatable {
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "timestamptz(6)")
     private Instant createdAt;
 
     @CreatedBy

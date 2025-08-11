@@ -16,7 +16,7 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class SoftDeletable extends Updatable {
 
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", columnDefinition = "timestamptz(6)")
     private Instant deletedAt;
 
     @Column(name = "deleted_by")

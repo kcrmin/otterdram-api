@@ -17,7 +17,7 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class AuthorModifiable extends SoftDeletable {
 
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", columnDefinition = "timestamptz(6)")
     private Instant modifiedAt;
 
     public boolean isModified() {

@@ -19,7 +19,7 @@ import java.time.Instant;
 public abstract class Updatable extends Creatable {
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz(6)")
     private Instant updatedAt;
 
     @LastModifiedBy
