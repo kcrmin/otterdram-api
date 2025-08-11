@@ -1,6 +1,6 @@
 // OtterDram DB Schema
-// version: 3.0.0
-// last updated: 2025-07-15
+// version: 3.1.0
+// last updated: 2025-08-12
 // author: kcrmin
 
 // ======================= ENUMS (상수 타입) =======================
@@ -126,6 +126,11 @@ Enum AlcoholPresence {
   HIGH
   VERY_HIGH
 }
+Enum AuthMethod {
+  QR_CODE
+  NFC
+  CODE
+}
 Enum Balance {
   UNBALANCED
   SLIGHTLY_UNBALANCED
@@ -167,6 +172,12 @@ Enum Tier {
   DECENT            // 80 - 89
   OUTSTANDING       // 90 - 95
   EXTRAORDINARY     // 96 - 100
+}
+Enum TransferStatus {
+  ACTIVE
+  CLAIMED
+  EXPIRED
+  REVOKED
 }
 Enum VolumeUnit {
   ML
@@ -213,10 +224,10 @@ Table users {
   verified boolean [not null, default: false, note: "인증된 인플루언서/전문가"]
   user_privacy Privacy [not null, default: 'PUBLIC']
   user_status UserStatus [not null, default: 'ACTIVE']
-  last_login_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  deleted_at timestamp
+  last_login_at timestamptz(6) [not null]
+  created_at timestamptz(6) [not null]
+  updated_at timestamptz(6) [not null]
+  deleted_at timestamptz(6)
 }
 Table user_profiles {
   id bigint [pk, increment]
@@ -228,15 +239,15 @@ Table user_profiles {
   address varchar(255)
   birthday date [not null]
   gender Gender [not null, default: 'UNSPECIFIED']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
+  updated_at timestamptz(6) [not null]
 }
 Table user_social_accounts {
   id bigint [pk, increment]
   user_id bigint [not null, ref: > users.id]
   provider varchar(50) [not null]
   provider_id varchar(255) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   indexes {
     (provider, provider_id) [unique]
   }
@@ -245,19 +256,19 @@ Table user_settings {
   id bigint [pk, increment]
   user_id bigint [ref: - users.id, not null, unique]
   // marketing_opt_in boolean [not null, default: false, note: "마케팅 수신 동의 여부"]
-  // marketing_opt_at timestamp [not null, note: "마케팅 수신 동의 시각(최초 동의/철회 변경 시마다 갱신)"]
+  // marketing_opt_at timestamptz(6) [not null, note: "마케팅 수신 동의 시각(최초 동의/철회 변경 시마다 갱신)"]
   terms_version_agreed varchar(50) [not null, note: "약관버전. 예: '2024.06'"]
   // notification_opt_in boolean [not null, default: false, note: "이메일/앱 알림 전체 동의 여부"]
   // push_opt_in boolean [not null, default: false, note: "앱 푸시 알림 동의 여부"]
   lang_preference LanguageCode [not null, default: 'en']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
+  updated_at timestamptz(6) [not null]
 }
 Table user_roles {
   id bigint [pk, increment]
   user_id bigint [ref: > users.id, not null]
   role_id bigint [ref: > roles.id, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: "ROLE_USER: created_at, ROLE_ADMIN: assigned_at"]
+  created_at timestamptz(6) [not null, note: "ROLE_USER: created_at, ROLE_ADMIN: assigned_at"]
   created_by bigint [ref: > users.id, not null, note: "ROLE_USER: created_by, ROLE_ADMIN: assigned_by"]
   indexes {
     (user_id, role_id) [unique]
@@ -266,9 +277,9 @@ Table user_roles {
 Table roles {
   id bigint [pk, increment]
   role_name varchar(50) [unique, not null, note: "ROLE_REVIEWER, ROLE_EDITOR, ROLE_ADMIN, ROLE_USER"]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
 }
 Table user_follows {
@@ -276,13 +287,13 @@ Table user_follows {
   follower_id bigint [ref: > users.id, not null]
   followee_id bigint [ref: > users.id, not null]
   status FollowStatus [not null, default: `APPROVED`]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
 }
 Table user_blocks {
   id bigint [pk, increment]
   blocker_id bigint [ref: > users.id, not null]
   blocked_id bigint [ref: > users.id, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
 }
 
 
@@ -296,7 +307,7 @@ Table user_reports {
   language_code LanguageCode [not null]
   report_reason varchar(100) [not null, note: "예: '욕설', '스팸' 등"]
   report_description text
-  reported_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  reported_at timestamptz(6) [not null]
   status ReportStatus [not null, default: 'PENDING']
 }
 Table content_reports {
@@ -307,7 +318,7 @@ Table content_reports {
   language_code LanguageCode [not null]
   report_reason varchar(100) [not null]
   report_description text
-  reported_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  reported_at timestamptz(6) [not null]
   status ReportStatus [not null, default: 'PENDING']
 }
 
@@ -320,9 +331,9 @@ Table shelves {
   owner_id bigint [not null, ref: > users.id]
   privacy Privacy [not null, default: 'PUBLIC']
   shelf_name varchar(100) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  deleted_at timestamp
+  created_at timestamptz(6) [not null]
+  updated_at timestamptz(6) [not null]
+  deleted_at timestamptz(6)
 }
 Table shelf_share_tokens {
   id bigint [pk, increment]
@@ -330,8 +341,8 @@ Table shelf_share_tokens {
   claim_type AuthMethod [not null]
   claim_token varchar(100) [not null, unique]
   status TokenStatus [default: 'ACTIVE']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
+  updated_at timestamptz(6) [not null]
 }
 
 // -- 선반 병 --
@@ -344,33 +355,35 @@ Table bottles {
   residual_volume_unit VolumeUnit [default: 'ML', not null]
   bottle_size smallint
   bottle_size_unit VolumeUnit [default: 'ML', not null]
-  acquired_at timestamp
+  acquired_at timestamptz(6)
   opened boolean [not null, default: false]
-  first_opened_at timestamp
-  last_opened_at timestamp
+  first_opened_at timestamptz(6)
+  last_opened_at timestamptz(6)
   completed boolean [not null, default: false]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table bottle_transfers {
   id bigint [pk, increment]
   bottle_id bigint [ref: > bottles.id, not null]
   status TokenStatus [not null, default: 'ACTIVE']
-  auth_at timestamp
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  transfered_at timestamptz(6)
+  transfered_by bigint [ref: > users.id, note: "claim된 이후 입력"]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  claimed_by bigint [ref: > users.id, note: "claim된 이후 입력"]
+  updated_at timestamptz(6) [not null]
+  updated_by bigint [ref: > users.id, not null]
 }
 Table bottle_transfer_tokens {
   id bigint [pk, increment]
   bottle_transfer_id bigint [not null, ref: > bottle_transfers.id]
   claim_type AuthMethod [not null]
   claim_token varchar(100) [not null, unique]
-  expires_at timestamp [not null]
+  expires_at timestamptz(6) [not null]
 
   indexes {
     (bottle_transfer_id, claim_type) [unique]
@@ -387,31 +400,33 @@ Table vials {
   note varchar(255)
   vial_size smallint
   vial_size_unit VolumeUnit [default: 'ML', not null]
-  acquired_at timestamp
+  acquired_at timestamptz(6)
   breathed_for interval [note: "첫 개봉 후 지난 시간 (last_opened_at - first_opened_at)"]
   completed boolean [not null, default: false]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table vial_transfers {
   id bigint [pk, increment]
   vial_id bigint [ref: > vials.id, not null]
   status TokenStatus [not null, default: 'ACTIVE']
-  auth_at timestamp
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  transfered_at timestamptz(6)
+  transfered_by bigint [ref: > users.id, note: "claim된 이후 입력"]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  claimed_by bigint [ref: > users.id, note: "claim된 이후 입력"]
+  updated_at timestamptz(6) [not null]
+  updated_by bigint [ref: > users.id, not null]
 }
 Table vial_transfer_tokens {
   id bigint [pk, increment]
   vial_transfer_id bigint [not null, ref: > vial_transfers.id]
   claim_type AuthMethod [not null]
   claim_token varchar(100) [not null, unique]
-  expires_at timestamp [not null]
+  expires_at timestamptz(6) [not null]
 
   indexes {
     (vial_transfer_id, claim_type) [unique]
@@ -441,12 +456,12 @@ Table reviews {
   nose_description text [note: "향"]
   palate_description text [note: "맛"]
   finish_description text [note: "피니시"]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  modified_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  modified_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 
@@ -459,19 +474,19 @@ Table entity_comments {
   depth smallint [not null, default: '0', note: "카테고리 깊이 (최대 1), 0=루트, 1=1단계"]
   language_code LanguageCode [not null, default: 'EN']
   comment text [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  modified_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  modified_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table comment_votes {
   id bigint [pk, increment]
   entity_comment_id bigint [ref: > entity_comments.id]
   vote_type VoteType [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   indexes {
     (entity_comment_id, created_by) [unique]
@@ -490,11 +505,11 @@ Table categories {
   path varchar(255) [not null, note: "materialized path, 예: '1/2/3'"]
   translations jsonb [note: "다국어 JSON"]
   descriptions jsonb [note: "다국어 JSON"]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 
@@ -508,11 +523,11 @@ Table companies {
   descriptions jsonb [note: "다국어 지원"]
   independent_bottler boolean [not null, default: false]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table distilleries {
@@ -527,18 +542,18 @@ Table distilleries {
   address varchar(255)
   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table distillery_brand_relations {
   id bigint [pk, increment]
   distillery_id bigint [ref: > distilleries.id, not null]
   brand_id bigint [ref: > brands.id, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
 }
 Table brands {
@@ -549,11 +564,11 @@ Table brands {
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table collections {
@@ -563,11 +578,11 @@ Table collections {
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table models {
@@ -579,18 +594,18 @@ Table models {
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table release_distillery_relations {
   id bigint [pk, increment]
   release_id bigint [ref: > releases.id, not null]
   distillery_id bigint [ref: > distilleries.id, not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
 }
 Table releases {
@@ -613,11 +628,11 @@ Table releases {
   natural_color boolean [note: "NULL은 UNKNOWN"]
   peat_level PeatLevel [not null, default: 'UNKNOWN']
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 
@@ -628,11 +643,11 @@ Table cask_materials {
   translations jsonb [note: "다국어 지원"]
   descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table cask_types {
@@ -642,11 +657,11 @@ Table cask_types {
   descriptions jsonb [note: "다국어 지원"]
   size_litre int [note: "예: 200L, 500L 등"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table casks {
@@ -658,11 +673,11 @@ Table casks {
   translations jsonb [note: "다국어 지원"]
   descriptions jsonb [note: "다국어 지원"]
   status DataStatus [not null, default: 'DRAFT']
-  created_at timestamp [not null]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  updated_at timestamp [not null]
+  updated_at timestamptz(6) [not null]
   updated_by bigint [ref: > users.id, not null]
-  deleted_at timestamp
+  deleted_at timestamptz(6)
   deleted_by bigint [ref: > users.id]
 }
 Table release_cask_relations {
@@ -672,7 +687,7 @@ Table release_cask_relations {
   cask_id bigint [ref: > casks.id, not null]
   proportion decimal(5,2) [note: "비율(%)"]
   maturation_months smallint
-  created_at timestamp [not null]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
 }
 
@@ -686,9 +701,9 @@ Table entity_revisions {
   diff_data jsonb
   is_latest boolean [not null, default: true, note: "생성 시 이전 버전 값 false로 변경"]
   status RevisionStatus [not null, default: 'IN_REVIEW']
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
-  reviewed_at timestamp
+  reviewed_at timestamptz(6)
   reviewed_by bigint [ref: > users.id]
 
   // indexes {
@@ -703,7 +718,7 @@ Table entity_tags {
   entity_id bigint [not null, note: "태그 대상 엔티티 ID"]
   language_code LanguageCode [not null]
   tag varchar(50) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
 }
 
@@ -715,8 +730,8 @@ Table regions {
   id bigint [pk, not null, increment]
   name varchar(100) [not null]
   translations text [note: "다국어 JSON, 예: {'ko':'유럽'}"]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q46'"]
 }
@@ -725,8 +740,8 @@ Table subregions {
   name varchar(100) [not null]
   translations text [note: "다국어 JSON, 예: {'ko':'서유럽'}"]
   region_id bigint [not null, ref: > regions.id]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q990'"]
 }
@@ -754,8 +769,8 @@ Table countries {
   longitude numeric(11,8)
   emoji varchar(191) [note: "국기 이모지, 예: '🇰🇷'"]
   "emojiU" varchar(191) [note: "유니코드, 예: 'U+1F1F0 U+1F1F7'"]
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q884'"]
 }
@@ -771,8 +786,8 @@ Table states {
   parent_id integer
   latitude numeric(10,8)
   longitude numeric(11,8)
-  created_at timestamp
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6)
+  updated_at timestamptz(6) [not null]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q485705'"]
 }
@@ -785,8 +800,8 @@ Table cities {
   country_code char(2) [not null, note: "ISO 국가코드, 예: 'US', 'KR'"]
   latitude numeric(10,8) [not null]
   longitude numeric(11,8) [not null]
-  created_at timestamp [not null, default: `'2014-01-01 12:01:01'`]
-  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamptz(6) [not null, default: `'2014-01-01 12:01:01'`]
+  updated_at timestamptz(6) [not null]
   flag smallint [not null, default: 1, note: "0=비활성, 1=활성"]
   "wikiDataId" varchar(255) [note: "위키데이터 Q번호, 예: 'Q8684'"]
 }
