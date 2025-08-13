@@ -2,6 +2,7 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.Instant;
 
@@ -12,6 +13,7 @@ import java.time.Instant;
  * </pre>
  */
 
+@Getter
 @MappedSuperclass
 public abstract class Reviewable extends Creatable {
 

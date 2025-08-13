@@ -2,6 +2,7 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
 
 import java.time.Instant;
 
@@ -13,6 +14,7 @@ import java.time.Instant;
  * </pre>
  */
 
+@Getter
 @MappedSuperclass
 public abstract class SoftDeletable extends Updatable {
 
