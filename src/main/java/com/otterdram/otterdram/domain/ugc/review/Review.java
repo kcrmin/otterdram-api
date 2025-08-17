@@ -66,7 +66,6 @@ public class Review extends AuthorModifiable {
     @JoinColumn(name = "vial_id")
     private Vial vial;
 
-    // TODO: Privacy of the review, get value from User's settings
     @Enumerated(EnumType.STRING)
     @Column(name = "privacy", nullable = false, columnDefinition = "varchar(10) default 'PUBLIC'")
     private Privacy privacy = Privacy.PUBLIC;
@@ -93,7 +92,6 @@ public class Review extends AuthorModifiable {
     @Convert(converter = PeriodConverter.class)
     private Period breathedFor;
 
-    // TODO: Automatically set it based on the score
     @Enumerated(EnumType.STRING)
     @Column(name = "tier", nullable = false, length = 50)
     private Tier tier;
