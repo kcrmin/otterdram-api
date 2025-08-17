@@ -26,7 +26,7 @@
 ```json
 {
   "id": 1,
-  "name": "Companie",
+  "name": "Company",
   "status": "CONFIRMED",
   "createdAt": "2025-08-12T09:00:00Z"
 }
@@ -34,20 +34,20 @@
 #### CreateRequest
 ```json
 {
-  "name": "Companie"
+  "name": "Company"
 }
 ```
 #### UpdateRequest
 ```json
 {
-  "name": "Companie RevA"
+  "name": "Company RevA"
 }
 ```
 #### 단건 성공 예시 (200)
 ```json
 {
   "id": 1,
-  "name": "Companie",
+  "name": "Company",
   "status": "CONFIRMED",
   "createdAt": "2025-08-12T09:00:00Z"
 }
@@ -58,7 +58,7 @@
   "data": [
     {
       "id": 1,
-      "name": "Companie",
+      "name": "Company",
       "status": "CONFIRMED",
       "createdAt": "2025-08-12T09:00:00Z"
     }
