@@ -32,7 +32,7 @@ import java.util.Map;
  *   city_id bigint [ref: > cities.id]
  *   address varchar(255)
  *   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
- *   status DataStatus [not null, default: 'DRAFT']
+ *   status DataStatus [not null, default: 'IN_REVIEW']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -79,8 +79,8 @@ public class Distillery extends SoftDeletable {
     private DistilleryOperationalStatus operationalStatus = DistilleryOperationalStatus.UNKNOWN;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
-    private DataStatus status = DataStatus.DRAFT;
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
+    private DataStatus status = DataStatus.IN_REVIEW;
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "distillery", fetch = FetchType.LAZY)

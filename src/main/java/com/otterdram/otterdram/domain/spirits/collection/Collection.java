@@ -24,7 +24,7 @@ import java.util.Map;
  *   collection_name varchar(100) [not null]
  *   translations jsonb [note: "다국어 지원 이름"]
  *   descriptions jsonb [note: "다국어 지원"]
- *   status DataStatus [not null, default: 'DRAFT']
+ *   status DataStatus [not null, default: 'IN_REVIEW']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -61,8 +61,8 @@ public class Collection extends SoftDeletable {
     private Map<LanguageCode, String> descriptions;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
-    private DataStatus status = DataStatus.DRAFT;
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
+    private DataStatus status = DataStatus.IN_REVIEW;
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)

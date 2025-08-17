@@ -21,7 +21,7 @@ import java.util.Map;
  *   translations jsonb [note: "다국어 지원"]
  *   descriptions jsonb [note: "다국어 지원"]
  *   size_litre int [note: "예: 200L, 500L 등"]
- *   status DataStatus [not null, default: 'DRAFT']
+ *   status DataStatus [not null, default: 'IN_REVIEW']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -56,8 +56,8 @@ public class CaskType extends SoftDeletable {
     private Integer sizeLitre;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
-    private DataStatus status = DataStatus.DRAFT;
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
+    private DataStatus status = DataStatus.IN_REVIEW;
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, orphanRemoval = true)

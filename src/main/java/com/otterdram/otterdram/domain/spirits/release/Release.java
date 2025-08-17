@@ -45,7 +45,7 @@ import java.util.Map;
  *   chill_filtered boolean [note: "NULL은 UNKNOWN"]
  *   natural_color boolean [note: "NULL은 UNKNOWN"]
  *   peat_level PeatLevel [not null, default: 'UNKNOWN']
- *   status DataStatus [not null, default: 'DRAFT']
+ *   status DataStatus [not null, default: 'IN_REVIEW']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
  *   updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
@@ -131,8 +131,8 @@ public class Release extends SoftDeletable {
 
     // =========================== Status Information ===========================
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'DRAFT'")
-    private DataStatus status = DataStatus.DRAFT;
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
+    private DataStatus status = DataStatus.IN_REVIEW;
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY)

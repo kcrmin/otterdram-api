@@ -1,12 +1,12 @@
 // OtterDram DB Schema
-// version: 3.1.0
-// last updated: 2025-08-12
+// version: 3.1.1
+// last updated: 2025-08-17
 // author: kcrmin
 
 // ======================= ENUMS (상수 타입) =======================
 // 1. Common
 Enum DataStatus {
-  DRAFT       // 초기 생성 상태 (비노출)
+  // DRAFT       // 초기 생성 상태 (비노출)
   IN_REVIEW   // 리비전 진행 중 상태 (노출 가능하나 최신 아님)
   CONFIRMED   // 리비전 완료 상태 (정상 노출)
   SUPPRESSED  // 신고 등으로 숨김 처리된 상태 (비노출)
@@ -522,7 +522,7 @@ Table companies {
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
   independent_bottler boolean [not null, default: false]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -541,7 +541,7 @@ Table distilleries {
   city_id bigint [ref: > cities.id]
   address varchar(255)
   operational_status DistilleryOperationalStatus [not null, default: 'UNKNOWN']
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -563,7 +563,7 @@ Table brands {
   brand_name varchar(100) [not null, unique]
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -577,7 +577,7 @@ Table collections {
   collection_name varchar(100) [not null]
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -593,7 +593,7 @@ Table models {
   model_name varchar(100) [not null]
   translations jsonb [note: "다국어 지원 이름"]
   descriptions jsonb [note: "다국어 지원"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -627,7 +627,7 @@ Table releases {
   chill_filtered boolean [note: "NULL은 UNKNOWN"]
   natural_color boolean [note: "NULL은 UNKNOWN"]
   peat_level PeatLevel [not null, default: 'UNKNOWN']
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -642,7 +642,7 @@ Table cask_materials {
   name varchar(50) [not null, unique, note: "예: American Oak, European Oak, Mizunara 등"]
   translations jsonb [note: "다국어 지원"]
   descriptions jsonb [note: "다국어 지원"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -656,7 +656,7 @@ Table cask_types {
   translations jsonb [note: "다국어 지원"]
   descriptions jsonb [note: "다국어 지원"]
   size_litre int [note: "예: 200L, 500L 등"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
@@ -672,7 +672,7 @@ Table casks {
   shape_id bigint [ref: > cask_types.id]
   translations jsonb [note: "다국어 지원"]
   descriptions jsonb [note: "다국어 지원"]
-  status DataStatus [not null, default: 'DRAFT']
+  status DataStatus [not null, default: 'IN_REVIEW']
   created_at timestamptz(6) [not null]
   created_by bigint [ref: > users.id, not null]
   updated_at timestamptz(6) [not null]
