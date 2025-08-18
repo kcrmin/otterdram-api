@@ -24,20 +24,40 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot Starters
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Hibernate Utils
 	implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.10.1'
+
+	// XML Binding
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// MapStruct
+	implementation 'org.mapstruct:mapstruct:1.6.3'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+	testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+	// Development Tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Test Dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Mockito Agent
+test {
+	jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
 }
 
 tasks.named('test') {
