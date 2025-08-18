@@ -5,8 +5,8 @@ import com.otterdram.otterdram.common.enums.target.RevisionTargetEntity;
 import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -30,8 +30,12 @@ import java.util.Map;
  * </pre>
  */
 
+@Getter
+@SuperBuilder
 @Entity
 @Table(name = "revisions")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EntityRevision extends Reviewable {
 
     @Id
@@ -46,20 +50,19 @@ public class EntityRevision extends Reviewable {
     @Column(name = "entity_id", nullable = false)
     private Long entityId;
 
+    @Builder.Default
     @Column(name = "schema_version", nullable = false, length = 16, columnDefinition = "varchar(16) default '1.0'")
-    private String schemaVersion = "1.0";
+    private String schemaVersion = "1.0.0";
 
     @Type(JsonType.class)
     @Column(name = "revision_data", nullable = false, columnDefinition = "jsonb")
-    private Map<String, String> revisionData;
+    private Map<String, Object> revisionData;
 
     @Type(JsonType.class)
     @Column(name = "diff_data", columnDefinition = "jsonb")
-    private Map<String, String> diffData;
+    private Map<String, Object> diffData;
 
-    @Column(name = "is_latest", nullable = false, columnDefinition = "boolean default true")
-    private boolean isLatest = true;
-
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
     private RevisionStatus status = RevisionStatus.IN_REVIEW;

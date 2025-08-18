@@ -2,7 +2,11 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 
@@ -14,7 +18,10 @@ import java.time.Instant;
  */
 
 @Getter
+@SuperBuilder
 @MappedSuperclass
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Reviewable extends Creatable {
 
     @Enumerated(EnumType.STRING)

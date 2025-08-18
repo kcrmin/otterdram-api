@@ -7,8 +7,8 @@ import com.otterdram.otterdram.domain.spirits.brand.Brand;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.Map;
  *   company_name varchar(100) [not null, unique]
  *   translations jsonb [note: "다국어 지원 이름"]
  *   descriptions jsonb [note: "다국어 지원"]
- *   independent_bottler boolean [not null, default: false]
+ *   independent_bottler boolean
  *   status DataStatus [not null, default: 'IN_REVIEW']
  *   created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
  *   created_by bigint [ref: > users.id, not null]
@@ -36,8 +36,11 @@ import java.util.Map;
  * </pre>
  */
 
+@Getter
+@SuperBuilder
 @Entity
 @Table(name = "companies")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Company extends SoftDeletable {
 
@@ -64,9 +67,10 @@ public class Company extends SoftDeletable {
     @Column(name = "descriptions", columnDefinition = "jsonb")
     private Map<LanguageCode, String> descriptions;
 
-    @Column(name = "independent_bottler", nullable = false, columnDefinition = "boolean default false")
-    private boolean independentBottler = false;
+    @Column(name = "independent_bottler")
+    private Boolean independentBottler;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
     private DataStatus status = DataStatus.IN_REVIEW;
