@@ -12,10 +12,8 @@ import com.otterdram.otterdram.domain.spirits.company.repository.CompanyReposito
 import com.otterdram.otterdram.domain.spirits.company.service.CompanyService;
 import com.otterdram.otterdram.domain.spirits.revision.EntityRevision;
 import com.otterdram.otterdram.domain.spirits.revision.dto.CompanyRevisionPayload;
-import com.otterdram.otterdram.domain.spirits.revision.dto.RevisionResponse;
 import com.otterdram.otterdram.domain.spirits.revision.repository.RevisionRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -38,7 +36,7 @@ class CompaniesServiceTest {
     @InjectMocks CompanyService companyService;
 
     @Test
-    void given_valid_request_when_create_company_then_main_entity_has_only_name_and_status() {
+    void create_valid_request_then_main_entity_only_name_status() {
         // Arrange
         CompanyCreateRequest request = createTestCompanyRequest();
 
@@ -69,7 +67,7 @@ class CompaniesServiceTest {
     }
 
     @Test
-    void given_valid_request_when_create_company_then_detailed_info_stored_in_revision() {
+    void create_valid_request_then_detailed_info_in_revision() {
         // Arrange
         CompanyCreateRequest request = createTestCompanyRequest();
 
@@ -113,7 +111,7 @@ class CompaniesServiceTest {
     }
 
     @Test
-    void given_valid_request_when_create_company_then_revision_linked_to_company() {
+    void create_valid_request_then_revision_linked_to_entity() {
         // Arrange
         CompanyCreateRequest request = createTestCompanyRequest();
 
@@ -140,7 +138,7 @@ class CompaniesServiceTest {
     }
 
     @Test
-    void given_valid_request_when_create_company_then_returns_correct_response() {
+    void create_valid_request_then_correct_response_returned() {
         // Arrange
         CompanyCreateRequest request = createTestCompanyRequest();
 
@@ -164,7 +162,7 @@ class CompaniesServiceTest {
     }
 
     @Test
-    void given_valid_request_when_create_company_then_saves_in_correct_order() {
+    void create_valid_request_then_entities_saved_in_order() {
         // Arrange
         CompanyCreateRequest request = createTestCompanyRequest();
 

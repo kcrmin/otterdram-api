@@ -158,7 +158,13 @@ if (missing.any { it.priority == P1 }) fail()
 
 ### 7.1 CompaniesService
 > CompaniesServiceTest (Unit)
-- [ ] create_valid_then_status_IN_REVIEW_default_fields  [P1|CRUD,TR]
+- [ ] given_valid_request_when_create_company_then_main_entity_has_only_name_and_status
+- [ ] given_valid_request_when_create_company_then_detailed_info_stored_in_revision
+- [ ] given_valid_request_when_create_company_then_revision_linked_to_company
+- [ ] given_valid_request_when_create_company_then_returns_correct_response
+- [ ] given_valid_request_when_create_company_then_saves_in_correct_order
+
+
 - [ ] create_중복이름_then_DuplicateException  [P1|CRUD,VAL]
 - [ ] get_public_CONFIRMED_only_then_IN_REVIEW_비노출  [P1|READ,FIL,SEC]
 - [ ] patch_null필드포함_then_null_덮어쓰기  [P2|UPDATE]
