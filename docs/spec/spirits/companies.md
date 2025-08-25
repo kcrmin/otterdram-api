@@ -34,7 +34,19 @@
 #### CreateRequest
 ```json
 {
-  "name": "Company"
+  "parentCompanyId": 1,
+  "companyLogo": "https://example.com/logo.png",
+  "name": "Test Company",
+  "translations": {
+    "ja": "テストカンパニー",
+    "ko": "테스트 컴퍼니"
+  },
+  "descriptions": {
+    "ja": "テストカンパニーの説明",
+    "ko": "테스트 컴퍼니 설명"
+  },
+  "independentBottler": false,
+  "schemaVersion": "1.0.0"
 }
 ```
 #### UpdateRequest

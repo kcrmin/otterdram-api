@@ -158,22 +158,41 @@ if (missing.any { it.priority == P1 }) fail()
 
 ### 7.1 CompaniesService
 > CompaniesServiceTest (Unit)
-- [ ] given_valid_request_when_create_company_then_main_entity_has_only_name_and_status
-- [ ] given_valid_request_when_create_company_then_detailed_info_stored_in_revision
-- [ ] given_valid_request_when_create_company_then_revision_linked_to_company
-- [ ] given_valid_request_when_create_company_then_returns_correct_response
-- [ ] given_valid_request_when_create_company_then_saves_in_correct_order
 
+#### 기본 생성 및 연결
+- [X] 유효한 회사 생성 요청시 메인 엔티티에는 이름과 상태만 저장  [P1|CREATE]
+- [X] 유효한 회사 생성 요청시 상세 정보는 revision에 저장  [P1|CREATE,REF]
+- [X] 회사 생성시 revision이 메인 엔티티와 정상 연결  [P1|CREATE,REF]
+- [X] 회사 생성 응답에 예상된 응답이 반환  [P1|CREATE]
+- [X] 회사 생성시 메인 엔티티 먼저 저장 후 revision 저장  [P1|CREATE,TR]
+- [ ] 이름만 생성하고 revision 데이터가 없을 경우 메인 엔티티 상태는 DRAFT로 설정됨  [P1|CREATE,TR]
+- [ ] 중복된 이름으로 회사 생성 요청시 Duplicate 예외가 발생함  [P1|CREATE,VAL]
 
-- [ ] create_중복이름_then_DuplicateException  [P1|CRUD,VAL]
-- [ ] get_public_CONFIRMED_only_then_IN_REVIEW_비노출  [P1|READ,FIL,SEC]
-- [ ] patch_null필드포함_then_null_덮어쓰기  [P2|UPDATE]
-- [ ] patch_권한없음_then_AccessDenied  [P1|SEC,UPDATE]
-- [ ] delete_first_then_softDelete_timestamp  [P1|DELETE]
-- [ ] delete_이미_deleted_then_idempotent_no_error  [P2|IDEM,DELETE]
-- [ ] get_soft_deleted_then_NotFound  [P1|READ,EDGE]
-- [ ] revision_approve_then_mainEntity_status_CONFIRMED  [P1|TR]
-- [ ] revision_reject_then_mainEntity_status_변경없음  [P2|TR]
+#### 조회 및 필터링
+- [ ] 삭제된 회사를 조회하면 NotFound 반환됨 [P1|READ,EDGE]
+- [ ] 공개 조회시 CONFIRMED만 노출되고 IN_REVIEW, soft_deleted, SUPPRESSED 등은 비노출됨 [P1|READ,FIL,SEC] —— 필터링으로 In_review, soft_deleted, suspended 등도 보기
+
+#### Revision 생성 상태 전이
+- [ ] DRAFT 상태 회사에 revision 생성시 메인과 revision status는 모두 IN_REVIEW 전환 [P1|CU,TR]
+- [ ] CONFIRMED 상태 회사에 revision 생성시 메인과 revision status는 모두 IN_REVIEW 전환 [P1|CU,TR]
+- [ ] IN_REVIEW 상태 회사에 추가 revision 생성 시도시 ValidationException [P1|CRUD,VAL,TR]
+- [ ] revision 생성시 entity_type과 entity_id로 최신 revision 조회 후 신규 생성 [P1|CRUD,SPEC]
+
+#### Revision 승인/거절 처리 (미완료)
+- [ ] 검토중인 revision 승인시 revision의 status는 APPROVED로 변경되고 메인엔티티 데이터 덮어쓰기 후 revision과 메인엔티티의 status를 CONFIRMED 전환 [P1|TR]
+- [ ] 검토중인 revision 거절시 revision의 status는 REJECTED로 변경되고 메인엔티티는 변경없이 status만 복원 [P1|TR]
+- [ ] revision 거절시 메인엔티티 데이터는 변경되지 않음을 확인 [P1|TR]
+- [ ] DRAFT 상태였던 메인엔티티의 revision 거절시 메인엔티티 DRAFT 상태로 복원 [P1|TR]
+- [ ] CONFIRMED 상태였던 메인엔티티의 revision 거절시 메인엔티티 CONFIRMED 상태로 복원 [P1|TR]
+
+#### 권한 및 보안
+- [ ] 회사를 처음 삭제하면 soft delete 타임스탬프가 기록됨  [P1|DELETE]
+- [ ] 삭제된 회사를 조회하면 NotFound 반환됨 [P1|READ,EDGE]
+- [ ] 이미 삭제된 회사를 다시 삭제해도 오류 없이 처리됨(idempotent)  [P2|IDEM,DELETE]
+- [ ] 삭제된 회사를 복구할 수 있음  [P3|OPT]
+
+#### 권한 및 보안
+- [ ] CUD 권한이 없을 경우 AccessDenied 발생함  [P1|SEC,CRUD]
 
 ### 7.2 DistilleriesService
 > DistilleriesServiceTest (Unit)
@@ -413,9 +432,13 @@ if (missing.any { it.priority == P1 }) fail()
 (HTTP contract, serialization, security, persistence wiring, side-effect timestamps.)
 
 > Unit vs Integration 구분 (요청 설명)
+
 > Unit: 순수 비즈니스 / 규칙 / 전이 / 밸리데이션 / 사양(Pagination, Spec Builder) 로직을 외부 I/O (DB, 네트워크) 없이 메모리에서 ms 단위로 실행. Mock / Stub 으로 협력자 격리 → 실패 원인 국소화, 빠른 피드백.
+
 > Integration: 실제 Spring Bean wiring + Security Filter + Validation + Jackson 직렬화 + JPA (Tx, Lazy/N+1, Lock) 포함 end-to-end 흐름 검사. HTTP 계약(상태코드/JSON), 권한, 트랜잭션 롤백/락, Performance(N+1)와 같은 교차 관심사를 검증.
+
 > 왜 분리? (1) 속도: P1 Unit 전부 수 초 내 피드백 (2) 디버깅 용이: 실패 범위 축소 (3) CI 파이프라인 단계 실행 (Unit 선행 실패시 빠른 차단) (4) 중복 최소화: 규칙은 Unit 100%, Integration 은 대표/계약 케이스만 유지 (5) 안정성: Integration 수 적게 유지해 플래키 감소.
+
 > 원칙: 동일 시나리오가 두 계층 모두에 존재해도 OK (Unit 우선), Integration 은 HTTP contract / persistence side-effect / security edge 케이스 위주.
 
 ### 8.1 Security & Error Handling
