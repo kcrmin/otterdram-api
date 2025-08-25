@@ -70,10 +70,11 @@ public class Company extends SoftDeletable {
     @Column(name = "independent_bottler")
     private Boolean independentBottler;
 
+    @Setter
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
-    private DataStatus status = DataStatus.IN_REVIEW;
+    private DataStatus status = DataStatus.DRAFT;
 
     // =========================== Relationships ===========================
     @OneToMany(mappedBy = "parentCompany", fetch = FetchType.LAZY)

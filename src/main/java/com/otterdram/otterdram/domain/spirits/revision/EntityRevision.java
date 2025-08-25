@@ -56,11 +56,11 @@ public class EntityRevision extends Reviewable {
 
     @Type(JsonType.class)
     @Column(name = "revision_data", nullable = false, columnDefinition = "jsonb")
-    private Map<String, Object> revisionData;
+    private Object revisionData;
 
     @Type(JsonType.class)
     @Column(name = "diff_data", columnDefinition = "jsonb")
-    private Map<String, Object> diffData;
+    private Object diffData;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
