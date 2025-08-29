@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     Optional<Company> findByCompanyName(String companyName);
-    Optional<Company> findByIdAndDeletedAtIsNull(Long id);
 }

@@ -16,7 +16,7 @@ import java.time.Instant;
  */
 
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @MappedSuperclass
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

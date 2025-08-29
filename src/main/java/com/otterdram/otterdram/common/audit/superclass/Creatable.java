@@ -16,7 +16,7 @@ import java.time.Instant;
  */
 
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

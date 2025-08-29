@@ -2,10 +2,7 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
@@ -20,7 +17,7 @@ import java.time.Instant;
  */
 
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @MappedSuperclass
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

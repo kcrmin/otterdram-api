@@ -19,19 +19,15 @@ public abstract class ReviewableService<T extends Reviewable, ID> {
 
     protected abstract JpaRepository<T, ID> getRepository();
 
-    protected abstract Long getCurrentUserId();
-
-    @Transactional(readOnly = true)
-    public final boolean isReviewed(ID id) {
-        return getRepository().findById(id)
-                .map(Reviewable::isReviewed)
-                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
-    }
+    protected Long getCurrentUserId() {
+        // TODO: getCurrentUserId
+        return 0L;
+    };
 
     @Transactional
-    public final void review(ID id, RevisionStatus status) {
+    public void review(ID id, RevisionStatus status) {
         T entity = getRepository().findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Reviewable entity not found with id: " + id));
 
         entity.review(getCurrentUserId(), status);
         getRepository().save(entity);

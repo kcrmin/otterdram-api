@@ -31,7 +31,7 @@ import java.util.Map;
  */
 
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Entity
 @Table(name = "revisions")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -61,10 +61,5 @@ public class EntityRevision extends Reviewable {
     @Type(JsonType.class)
     @Column(name = "diff_data", columnDefinition = "jsonb")
     private Object diffData;
-
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
-    private RevisionStatus status = RevisionStatus.IN_REVIEW;
 
 }
