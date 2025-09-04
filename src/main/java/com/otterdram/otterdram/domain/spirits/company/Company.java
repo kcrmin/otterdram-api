@@ -4,6 +4,7 @@ import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.brand.Brand;
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import com.otterdram.otterdram.domain.spirits.distillery.Distillery;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -42,7 +43,7 @@ import java.util.Map;
 @Table(name = "companies")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Company extends SoftDeletable {
+public class Company extends SoftDeletable implements RevisableEntity {
 
     @Id
     @SequenceGenerator(name = "company_seq", sequenceName = "company_sequence")
@@ -88,6 +89,7 @@ public class Company extends SoftDeletable {
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<Brand> brands = new ArrayList<>();
 
+    @Override
     public void updateStatus(DataStatus status) {
         this.status = status;
     }

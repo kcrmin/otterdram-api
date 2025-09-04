@@ -13,11 +13,11 @@ public final class RepositoryStubs {
     private RepositoryStubs() {}
 
     public static void noDuplicateName(CompanyRepository repo, String companyName) {
-        when(repo.findByCompanyName(companyName)).thenReturn(Optional.empty());
+        when(repo.existsByCompanyName(companyName)).thenReturn(false);
     }
 
     public static void duplicateName(CompanyRepository repo, String companyName, Company existing) {
-        when(repo.findByCompanyName(companyName)).thenReturn(Optional.of(existing));
+        when(repo.existsByCompanyName(companyName)).thenReturn(true);
     }
 
     public static void existingCompanyById(CompanyRepository repo, Company existing) {

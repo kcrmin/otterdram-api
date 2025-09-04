@@ -53,7 +53,7 @@ public class CompanyTransitionServiceTest {
         @DisplayName("company status가 IN_REVIEW로 전환되었는지 검증")
         void testCompanyStatusTransition() {
             // Act
-            companyService.createCompanyRevision(savedCompany.getId(), request);
+            companyService.createRevision(savedCompany.getId(), request);
 
             // Assert
             Company capturedCompany = captureCompany();
@@ -64,7 +64,7 @@ public class CompanyTransitionServiceTest {
         @DisplayName("revision status가 IN_REVIEW로 전환되었는지 검증")
         void testRevisionStatusTransition() {
             // Act
-            companyService.createCompanyRevision(savedCompany.getId(), request);
+            companyService.createRevision(savedCompany.getId(), request);
 
             // Assert
             EntityRevision capturedRevision = captureRevision();
@@ -95,7 +95,7 @@ public class CompanyTransitionServiceTest {
 
             // Act & Assert
             Assertions.assertThatThrownBy(() -> {
-                companyService.createCompanyRevision(savedCompany.getId(), request);
+                companyService.createRevision(savedCompany.getId(), request);
             })
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Cannot create a new revision for a company that is already under review.");
@@ -110,7 +110,7 @@ public class CompanyTransitionServiceTest {
 
             // Act & Assert
             Assertions.assertThatThrownBy(() -> {
-                companyService.createCompanyRevision(savedCompany.getId(), request);
+                companyService.createRevision(savedCompany.getId(), request);
             })
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("There is already a pending revision for this company. Revision ID: " + savedRevision.getId());
@@ -146,7 +146,7 @@ public class CompanyTransitionServiceTest {
         @DisplayName("company status가 IN_REVIEW로 전환되었는지 검증")
         void testCompanyStatusTransition() {
             // Act
-            companyService.createCompanyRevision(savedCompany.getId(), request);
+            companyService.createRevision(savedCompany.getId(), request);
 
             // Assert
             Company capturedCompany = captureCompany();
@@ -157,7 +157,7 @@ public class CompanyTransitionServiceTest {
         @DisplayName("revision status가 IN_REVIEW로 전환되었는지 검증")
         void testRevisionStatusTransition() {
             // Act
-            companyService.createCompanyRevision(savedCompany.getId(), request);
+            companyService.createRevision(savedCompany.getId(), request);
 
             // Assert
             EntityRevision capturedRevision = captureRevision();

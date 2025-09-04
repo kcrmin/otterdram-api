@@ -1,114 +1,72 @@
 package com.otterdram.otterdram.domain.spirits.company.service;
 
 import com.otterdram.otterdram.common.enums.common.DataStatus;
-import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import com.otterdram.otterdram.domain.spirits.company.dto.CompanyCreateRequest;
-import com.otterdram.otterdram.common.audit.service.SoftDeletableService;
 import com.otterdram.otterdram.common.enums.target.RevisionTargetEntity;
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.company.dto.CompanyResponse;
 import com.otterdram.otterdram.domain.spirits.company.dto.CompanyRevisionPayload;
 import com.otterdram.otterdram.domain.spirits.company.mapper.CompanyMapper;
 import com.otterdram.otterdram.domain.spirits.company.repository.CompanyRepository;
-import com.otterdram.otterdram.domain.spirits.revision.EntityRevision;
-import com.otterdram.otterdram.domain.spirits.revision.dto.RevisionResponse;
-import com.otterdram.otterdram.domain.spirits.revision.mapper.RevisionMapper;
+import com.otterdram.otterdram.domain.spirits.revision.service.RevisableEntityService;
 import com.otterdram.otterdram.domain.spirits.revision.repository.RevisionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService extends SoftDeletableService<Company, Long> {
+public class CompanyService extends RevisableEntityService<Company, Long, CompanyCreateRequest, CompanyResponse, CompanyRevisionPayload> {
     private final CompanyRepository companyRepository;
     private final RevisionRepository revisionRepository;
 
-    @Override
-    protected JpaRepository<Company, Long> getRepository() {
+    @Override protected JpaRepository<Company, Long> getRepository() {
         return companyRepository;
     }
 
-    @Transactional
-    public CompanyResponse createCompany(CompanyCreateRequest request) {
-        // 1. 컴퍼니 이름으로 조회 존재한다면 예외 발생
-        String companyName = request.companyBaseData().companyName();
-        checkCompanyExists(companyName);
+    @Override protected RevisionRepository getRevisionRepository() {
+        return revisionRepository;
+    }
 
-        // 2. 컴퍼니 생성 및 저장
-        Company company = Company.builder()
-                .companyName(request.companyBaseData().companyName())
-                .status(hasAdditionalData(request) ? DataStatus.IN_REVIEW : DataStatus.DRAFT)
-                .build();
-        Company savedCompany = companyRepository.save(company);
+    @Override protected RevisionTargetEntity targetEntity() {
+        return RevisionTargetEntity.COMPANY;
+    }
 
-        // 3. 컴퍼니 리비전 생성 및 저장 (추가 데이터가 있는 경우에만)
-        if (hasAdditionalData(request)) {
-            EntityRevision revision = createRevision(savedCompany, request);
-            revisionRepository.save(revision);
+    @Override
+    protected void checkUniqueness(CompanyCreateRequest companyCreateRequest) {
+        String name = companyCreateRequest.companyBaseData().companyName();
+        if (companyRepository.existsByCompanyName(name)) {
+            throw new IllegalArgumentException("Company with name '" + name + "' already exists.");
         }
-
-        // 4. 컴퍼니 응답 반환
-        return CompanyMapper.INSTANCE.toResponse(savedCompany);
     }
 
-    private void checkCompanyExists(String companyName) {
-        companyRepository.findByCompanyName(companyName)
-            .ifPresent(company -> {
-                throw new IllegalArgumentException("Company with name '" + companyName + "' already exists.");
-            });
+    @Override
+    protected boolean hasAdditionalData(CompanyCreateRequest companyCreateRequest) {
+        return companyCreateRequest.companyBaseData().parentCompanyId() != null ||
+                companyCreateRequest.companyBaseData().companyLogo() != null ||
+                !companyCreateRequest.companyBaseData().translations().isEmpty() ||
+                !companyCreateRequest.companyBaseData().descriptions().isEmpty() ||
+                companyCreateRequest.companyBaseData().independentBottler() != null;
     }
 
-    @Transactional
-    public RevisionResponse createCompanyRevision(Long companyId, CompanyCreateRequest request) {
-        // 1. 컴퍼니 이름으로 조회
-        Company existingCompany = companyRepository.findById(companyId).orElseThrow(() ->
-            new IllegalArgumentException("Company with ID " + companyId + " does not exist.")
+    @Override
+    protected Company toEntity(CompanyCreateRequest companyCreateRequest, DataStatus status) {
+        return Company.builder()
+                .companyName(companyCreateRequest.companyBaseData().companyName())
+                .status(status)
+                .build();
+    }
+
+    @Override
+    protected CompanyResponse toResponse(Company entity) {
+        return CompanyMapper.INSTANCE.toResponse(entity);
+    }
+
+    @Override
+    protected CompanyRevisionPayload toRevisionPayload(Company entity, CompanyCreateRequest companyCreateRequest) {
+        return new CompanyRevisionPayload(
+                companyCreateRequest.companyBaseData(),
+                entity.getStatus()
         );
-
-        // 2. 이미 대기 중인 리비전이 있는지 확인
-        revisionRepository.findByEntityTypeAndEntityIdAndStatus(RevisionTargetEntity.COMPANY, existingCompany.getId(), RevisionStatus.IN_REVIEW)
-            .ifPresent(revision -> {
-                throw new IllegalStateException("There is already a pending revision for this company. Revision ID: " + revision.getId());
-            });
-
-        // 3. 컴퍼니 status 확인 및 업데이트
-        if (existingCompany.getStatus() == DataStatus.SUPPRESSED) {
-            throw new IllegalStateException("Cannot create a revision for a suppressed company.");
-        }
-        if (existingCompany.getStatus() == DataStatus.IN_REVIEW) {
-            throw new IllegalStateException("Cannot create a new revision for a company that is already under review.");
-        }
-        existingCompany.updateStatus(DataStatus.IN_REVIEW);
-        companyRepository.save(existingCompany);
-
-        // 4. 컴퍼니 리비전 생성 및 저장
-        EntityRevision revision = createRevision(existingCompany, request);
-        EntityRevision savedRevision = revisionRepository.save(revision);
-
-        // 5. 컴퍼니 응답 반환
-        return RevisionMapper.INSTANCE.toResponse(savedRevision);
-    }
-
-
-    private boolean hasAdditionalData(CompanyCreateRequest request) {
-        return request.companyBaseData().parentCompanyId() != null ||
-                request.companyBaseData().companyLogo() != null ||
-                !request.companyBaseData().translations().isEmpty() ||
-                !request.companyBaseData().descriptions().isEmpty() ||
-                request.companyBaseData().independentBottler() != null;
-    }
-    private EntityRevision createRevision(Company company, CompanyCreateRequest request) {
-        return EntityRevision.builder()
-                .entityType(RevisionTargetEntity.COMPANY)
-                .entityId(company.getId())
-                .schemaVersion(request.schemaVersion())
-                .revisionData(new CompanyRevisionPayload(
-                        request.companyBaseData(),
-                        company.getStatus()
-                ))
-                .diffData(null)
-                .build();
     }
 }

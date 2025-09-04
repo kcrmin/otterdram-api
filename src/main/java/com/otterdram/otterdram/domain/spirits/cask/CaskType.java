@@ -3,6 +3,7 @@ package com.otterdram.otterdram.domain.spirits.cask;
 import com.otterdram.otterdram.common.audit.superclass.SoftDeletable;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -34,7 +35,7 @@ import java.util.Map;
 @Entity
 @Table(name = "cask_types")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CaskType extends SoftDeletable {
+public class CaskType extends SoftDeletable /*implements RevisableEntity*/ {
 
     @Id
     @SequenceGenerator(name = "cask_type_seq", sequenceName = "cask_type_sequence")

@@ -48,7 +48,7 @@ public class CompanyCreationServiceTest {
             RepositoryStubs.saveCompany(companyRepository, any(Company.class), savedCompany);
 
             // Act
-            companyService.createCompany(request);
+            companyService.create(request);
         }
 
         @Test
@@ -113,7 +113,7 @@ public class CompanyCreationServiceTest {
             RepositoryStubs.saveRevision(revisionRepository, any(EntityRevision.class), savedRevision);
 
             // Act
-            companyService.createCompany(request);
+            companyService.create(request);
         }
 
         @Test
@@ -194,7 +194,7 @@ public class CompanyCreationServiceTest {
         RepositoryStubs.duplicateName(companyRepository, request.companyBaseData().companyName(), existingCompany);
 
         // Act & Assert
-        Assertions.assertThatThrownBy(() -> companyService.createCompany(request))
+        Assertions.assertThatThrownBy(() -> companyService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Company with name '" + request.companyBaseData().companyName() + "' already exists.");
 
