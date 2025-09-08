@@ -6,6 +6,7 @@ import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.collection.Collection;
 
 
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.relation.DistilleryBrandRelation;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -41,7 +42,7 @@ import java.util.Map;
 @Entity
 @Table(name = "brands")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Brand extends SoftDeletable {
+public class Brand extends SoftDeletable /*implements RevisableEntity*/ {
 
     @Id
     @SequenceGenerator(name = "brand_seq", sequenceName = "brand_sequence")

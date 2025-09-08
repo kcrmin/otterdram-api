@@ -5,6 +5,7 @@ import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
 import com.otterdram.otterdram.domain.spirits.category.Category;
 import com.otterdram.otterdram.domain.spirits.collection.Collection;
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import com.otterdram.otterdram.domain.spirits.release.Release;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -41,7 +42,7 @@ import java.util.Map;
 @Entity
 @Table(name = "models")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Model extends SoftDeletable {
+public class Model extends SoftDeletable /*implements RevisableEntity*/ {
 
     @Id
     @SequenceGenerator(name = "model_seq", sequenceName = "model_sequence")

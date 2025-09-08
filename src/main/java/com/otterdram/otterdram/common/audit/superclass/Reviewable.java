@@ -2,7 +2,8 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 
@@ -14,9 +15,13 @@ import java.time.Instant;
  */
 
 @Getter
+@SuperBuilder(toBuilder = true)
 @MappedSuperclass
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Reviewable extends Creatable {
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'IN_REVIEW'")
     private RevisionStatus status = RevisionStatus.IN_REVIEW;

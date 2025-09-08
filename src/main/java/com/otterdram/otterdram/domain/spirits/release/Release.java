@@ -7,6 +7,7 @@ import com.otterdram.otterdram.common.enums.spirits.AgeStatementType;
 import com.otterdram.otterdram.common.enums.spirits.BottlingFormatType;
 import com.otterdram.otterdram.common.enums.spirits.BottlingStrengthType;
 import com.otterdram.otterdram.common.enums.spirits.PeatLevel;
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import com.otterdram.otterdram.domain.spirits.model.Model;
 import com.otterdram.otterdram.domain.spirits.relation.DistilleryReleaseRelation;
 import com.otterdram.otterdram.domain.spirits.relation.ReleaseCaskRelation;
@@ -59,7 +60,7 @@ import java.util.Map;
 @Entity
 @Table(name = "release")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Release extends SoftDeletable {
+public class Release extends SoftDeletable /*implements RevisableEntity*/ {
 
     @Id
     @SequenceGenerator(name = "release_seq", sequenceName = "release_sequence")

@@ -5,6 +5,7 @@ import com.otterdram.otterdram.common.enums.spirits.DistilleryOperationalStatus;
 import com.otterdram.otterdram.common.geo.address.Address;
 import com.otterdram.otterdram.common.enums.common.DataStatus;
 import com.otterdram.otterdram.common.enums.common.LanguageCode;
+import com.otterdram.otterdram.domain.spirits.revision.RevisableEntity;
 import com.otterdram.otterdram.domain.spirits.company.Company;
 import com.otterdram.otterdram.domain.spirits.relation.DistilleryBrandRelation;
 import com.otterdram.otterdram.domain.spirits.relation.DistilleryReleaseRelation;
@@ -46,7 +47,7 @@ import java.util.Map;
 @Entity
 @Table(name = "distilleries")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Distillery extends SoftDeletable {
+public class Distillery extends SoftDeletable /*implements RevisableEntity*/ {
 
     @Id
     @SequenceGenerator(name = "distillery_seq", sequenceName = "distillery_sequence")

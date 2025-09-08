@@ -18,17 +18,20 @@ public abstract class SoftDeletableService<T extends SoftDeletable, ID> {
 
     protected abstract JpaRepository<T, ID> getRepository();
 
-    protected abstract Long getCurrentUserId();
+    protected Long getCurrentUserId() {
+        // TODO: getCurrentUserId
+        return 0L;
+    };
 
     @Transactional(readOnly = true)
-    public final boolean isSoftDeleted(ID id) {
+    public boolean isSoftDeleted(ID id) {
         return getRepository().findById(id)
                 .map(SoftDeletable::isDeleted)
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
     }
 
     @Transactional
-    public final void softDelete(ID id) {
+    public void softDelete(ID id) {
         T entity = getRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
 
@@ -37,7 +40,7 @@ public abstract class SoftDeletableService<T extends SoftDeletable, ID> {
     }
 
     @Transactional
-    public final void restore(ID id) {
+    public void restore(ID id) {
         T entity = getRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
 

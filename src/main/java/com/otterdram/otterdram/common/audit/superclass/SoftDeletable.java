@@ -2,7 +2,8 @@ package com.otterdram.otterdram.common.audit.superclass;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 
@@ -15,7 +16,10 @@ import java.time.Instant;
  */
 
 @Getter
+@SuperBuilder(toBuilder = true)
 @MappedSuperclass
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class SoftDeletable extends Updatable {
 
     @Column(name = "deleted_at", columnDefinition = "timestamptz(6)")
