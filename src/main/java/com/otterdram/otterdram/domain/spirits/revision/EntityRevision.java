@@ -2,7 +2,6 @@ package com.otterdram.otterdram.domain.spirits.revision;
 
 import com.otterdram.otterdram.common.audit.superclass.Reviewable;
 import com.otterdram.otterdram.common.enums.target.RevisionTargetEntity;
-import com.otterdram.otterdram.common.enums.common.RevisionStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;

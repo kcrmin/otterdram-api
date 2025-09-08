@@ -52,13 +52,13 @@ public abstract class RevisableEntityService<
 
         getRevisionRepository()
                 .findByEntityTypeAndEntityIdAndStatus(targetEntity(), existing.getId(), RevisionStatus.IN_REVIEW)
-                .ifPresent(revision -> { throw new IllegalArgumentException("There is already a pending revision for this entity."); });
+                .ifPresent(revision -> { throw new IllegalStateException("There is already a pending revision for this company. Revision ID: " + existing.getId()); });
 
         if (existing.getStatus() == DataStatus.SUPPRESSED) {
             throw new IllegalStateException("Cannot create revision for a suppressed entity.");
         }
         if (existing.getStatus() == DataStatus.IN_REVIEW) {
-            throw new IllegalStateException("Cannot create revision for an entity that is already in review.");
+            throw new IllegalStateException("Cannot create a new revision for a company that is already under review.");
         }
 
         existing.updateStatus(DataStatus.IN_REVIEW);

@@ -8,7 +8,6 @@ import com.otterdram.otterdram.domain.spirits.company.repository.CompanyReposito
 import com.otterdram.otterdram.domain.spirits.company.service.CompanyService;
 import com.otterdram.otterdram.domain.spirits.revision.EntityRevision;
 import com.otterdram.otterdram.domain.spirits.revision.repository.RevisionRepository;
-import com.otterdram.otterdram.domain.spirits.revision.service.RevisionService;
 import com.otterdram.otterdram.testsupport.Fixtures;
 import com.otterdram.otterdram.testsupport.RepositoryStubs;
 import org.assertj.core.api.Assertions;
@@ -30,7 +29,6 @@ public class CompanyTransitionServiceTest {
     @Mock CompanyRepository companyRepository;
     @Mock RevisionRepository revisionRepository;
     @InjectMocks CompanyService companyService;
-    @InjectMocks RevisionService revisionService;
 
     @Nested
     @DisplayName("기존 company status가 DRAFT인 경우")
